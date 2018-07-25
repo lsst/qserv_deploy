@@ -45,7 +45,8 @@ RUN wget -O /tmp/terraform.zip \
     chmod +x /usr/local/bin/terraform
 
 # Install openstack
-RUN apt-get -y install openstack-dashboard
+RUN apt-get -y install python python-dev python-pip
+RUN pip install python-openstackclient
 
 ENV QSERV_INSTALL_DIR /opt/qserv
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
