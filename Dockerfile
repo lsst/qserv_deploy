@@ -44,6 +44,8 @@ RUN wget -O /tmp/terraform.zip \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod +x /usr/local/bin/terraform
 
+# Install openstack
+RUN apt-get -y install openstack-dashboard
 ENV QSERV_INSTALL_DIR /opt/qserv
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
 ENV CLUSTER_CONFIG_DIR /qserv-deploy/config
