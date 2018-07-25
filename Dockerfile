@@ -48,7 +48,7 @@ RUN wget -O /tmp/terraform.zip \
 RUN apt-get -y install python python-dev python-pip
 RUN pip install python-openstackclient
 
-EdNV QSERV_INSTALL_DIR /opt/qserv
+ENV QSERV_INSTALL_DIR /opt/qserv
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
 ENV CLUSTER_CONFIG_DIR /qserv-deploy/config
 ENV KUBECONFIG "$CLUSTER_CONFIG_DIR"/kubeconfig

@@ -75,3 +75,8 @@ variable "lsst_config_path" {
   description = "Default lsst config directory"
   default     = "/qserv-deploy/config"
 }
+
+variable "first_volume" {
+  description = "Number of first volume"
+  default = 100
+}
