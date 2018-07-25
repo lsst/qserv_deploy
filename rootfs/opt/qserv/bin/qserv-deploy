@@ -118,6 +118,7 @@ if [ -n "$PROVISION" ]; then
         terraform init -from-module $OS_DIR/terraform
     fi 
     . "$TF_DIR/terraform-setup.sh"
+    . "$TF_DIR/get_volume_id.sh"
     terraform apply --auto-approve \
         --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
     cd -
