@@ -45,8 +45,10 @@ RUN wget -O /tmp/terraform.zip \
     chmod +x /usr/local/bin/terraform
 
 # Install openstack
-RUN apt-get -y install openstack-dashboard
-ENV QSERV_INSTALL_DIR /opt/qserv
+RUN apt-get -y install python python-dev python-pip
+RUN pip install python-openstackclient
+
+EdNV QSERV_INSTALL_DIR /opt/qserv
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
 ENV CLUSTER_CONFIG_DIR /qserv-deploy/config
 ENV KUBECONFIG "$CLUSTER_CONFIG_DIR"/kubeconfig
