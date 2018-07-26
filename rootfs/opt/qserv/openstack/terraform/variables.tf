@@ -78,5 +78,9 @@ variable "lsst_config_path" {
 
 variable "first_volume" {
   description = "Number of first volume"
-  default = 100
+}
+
+variable "volume_id" {
+  type = "map"
+  default = {}
 }
