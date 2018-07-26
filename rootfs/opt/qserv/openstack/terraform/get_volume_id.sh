@@ -7,7 +7,7 @@ openstack volume list | grep vol-qserv >> volume.txt
 
 # Add volume in variables.tf
 echo "# volume id
-volume_id = {">> terraform.tfvars
+volume_id = {">> ../terraform.tfvars
 
 nb_ligne=`wc -l volume.txt| grep -o "^[0-9]\+"`
 for i in `seq 1 ${nb_ligne}`
