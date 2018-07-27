@@ -3,10 +3,10 @@
 # Number of first volume
 echo "first_volume = 100" >> $CLUSTER_CONFIG_DIR/terraform.tfvars
 # Get volume list
-#openstack volume list | grep vol-qserv >> volume.txt
+openstack volume list | grep vol-qserv >> volume.txt
 
 # Add volume in variables.tf
-echo "# volume id
+echo "# Volume id
 volume_id = {">> $CLUSTER_CONFIG_DIR/terraform.tfvars
 
 nb_ligne=`wc -l $CLUSTER_CONFIG_DIR"/terraform/volume.txt"| grep -o "^[0-9]\+"`
