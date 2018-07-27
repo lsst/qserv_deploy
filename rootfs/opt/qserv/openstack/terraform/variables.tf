@@ -76,11 +76,11 @@ variable "lsst_config_path" {
   default     = "/qserv-deploy/config"
 }
 
-variable "first_volume" {
+variable "firstVolume" {
   description = "Number of first volume"
 }
 
-variable "volume_id" {
+variable "volumeId" {
   type = "map"
   default = {}
 }
