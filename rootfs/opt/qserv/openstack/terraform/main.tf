@@ -149,7 +149,7 @@ resource "openstack_compute_instance_v2" "master" {
 # Attach volume to master
 resource "openstack_compute_volume_attach_v2" "attach_volume_master" {
   instance_id = "${openstack_compute_instance_v2.master.id}"
-  volume_id = "${lookup(var.volume_id,"${var.first_volume}")}"
+  volume_id = "${lookup(var.volumeId,"${var.firstVolume}")}"
 }
 
 
@@ -172,7 +172,7 @@ resource "openstack_compute_instance_v2" "workers" {
 resource "openstack_compute_volume_attach_v2" "attach_volume_workers"{
   count = "${var.nb_worker}"
   instance_id = "${element(openstack_compute_instance_v2.workers.*.id,"${count.index}")}"
-  volume_id = "${lookup(var.volume_id,count.index+"${var.first_volume+1}")}"
+  volume_id = "${lookup(var.volumeId,count.index+"${var.firstVolume+1}")}"
 }
 
 
