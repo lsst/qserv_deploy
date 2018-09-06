@@ -119,7 +119,6 @@ if [ -n "$PROVISION" ]; then
         terraform init -from-module $OS_DIR/terraform
     fi 
     . "$TF_DIR/terraform-setup.sh"
-    . "$TF_DIR/get_volume_id.sh"
     if [ -f $CLUSTER_CONFIG_DIR/volume_list]
     then
         export TF_VAR_firstVolume=`head -1 $CLUSTER_CONFIG_DIR/volume_list`;
