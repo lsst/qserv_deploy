@@ -99,6 +99,7 @@ if [ -n "$DELETE" ]; then
     . "$TF_DIR/get_volume_id.sh"
     terraform destroy --auto-approve \
         --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
+        \ if [-f ./volume_list]; then --var-file="./volume_list"
     cd ..
     rm -rf "$TF_DIR"
     )
