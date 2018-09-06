@@ -99,7 +99,6 @@ if [ -n "$DELETE" ]; then
     . "$TF_DIR/get_volume_id.sh"
     terraform destroy --auto-approve \
         --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
-        \ if [-f ./volume_list]; then --var-file="./volume_list"
     cd ..
     rm -rf "$TF_DIR"
     )
@@ -121,6 +120,11 @@ if [ -n "$PROVISION" ]; then
     fi 
     . "$TF_DIR/terraform-setup.sh"
     . "$TF_DIR/get_volume_id.sh"
+    if [ -f $CLUSTER_CONFIG_DIR/volume_list]
+    then
+        export TF_VAR_firstVolume=`head -1 $CLUSTER_CONFIG_DIR/volume_list`;
+        export TF_VAR_volumeId=`cat $CLUSTER_CONFIG_DIR/volume_list | tail -1`; 
+    fi 
     terraform apply --auto-approve \
         --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
     cd -
