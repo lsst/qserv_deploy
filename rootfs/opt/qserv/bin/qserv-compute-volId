@@ -52,5 +52,5 @@ volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '
 volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
 volume_list={${volume_list}}
 
-echo "firstVolume="$t >> /qserv-deploy/config/volume_list
-echo "volumeId="$volume_list >> /qserv-deploy/config/volume_list
+echo $t >> /qserv-deploy/config/volume_list
+echo $volume_list >> /qserv-deploy/config/volume_list
