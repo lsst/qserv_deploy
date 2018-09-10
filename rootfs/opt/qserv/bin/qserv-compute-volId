@@ -55,5 +55,5 @@ volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//
 volume_list={${volume_list}}
 
 echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list
-echo "firstVolume"$t >> $CLUSTER_CONFIG_DIR/volume_list
-echo "volumeId"$volume_list >> $CLUSTER_CONFIG_DIR/volume_list
+echo "firstVolume = "$t >> $CLUSTER_CONFIG_DIR/volume_list
+echo "volumeId = "$volume_list >> $CLUSTER_CONFIG_DIR/volume_list

@@ -78,7 +78,9 @@ variable "lsst_config_path" {
 
 variable "firstVolume" {
   description = "Number of first volume"
+  default = 0
 }
+
 
 variable "volumeId" {
   type = "map"
@@ -86,6 +88,6 @@ variable "volumeId" {
 }
 
 variable "attach_volume" {
-    description = "1 if volume_list file exist"
+    description = "1 if /qserv-deploy/config/volume_list file exist"
     default = 0
 }
