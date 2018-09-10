@@ -84,3 +84,8 @@ variable "volumeId" {
   type = "map"
   default = {}
 }
+
+variable "attach_volume" {
+    description = "1 if volume_list file exist"
+    default = 0
+}

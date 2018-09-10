@@ -8,12 +8,14 @@ Usage:`basename $0`
     -p volume prefix
 EOD
 }
+
 if [ -f /qserv-deploy/config/volume_list ]
 then
     echo "Delete old volume_list file to continue and start over";
     exit; 
 fi
 
+CLUSTER_CONFIG_DIR=/qserv-deploy/config
 # Check if openstack connection parameters are available
 OS_RC_FILE="$CLUSTER_CONFIG_DIR/os-openrc.sh"
 if [ -z "$OS_PROJECT_NAME" ]; then
@@ -52,5 +54,6 @@ volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '
 volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
 volume_list={${volume_list}}
 
-echo "firstVolume="$t >> /qserv-deploy/config/volume_list
-echo "volumeId="$volume_list >> /qserv-deploy/config/volume_list
+echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list
+echo "firstVolume"$t >> $CLUSTER_CONFIG_DIR/volume_list
+echo "volumeId"$volume_list >> $CLUSTER_CONFIG_DIR/volume_list
