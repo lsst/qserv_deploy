@@ -1,0 +1,60 @@
+#!/bin/sh
+
+usage() { 
+cat << EOD
+Usage:`basename $0`
+
+    -t number of first volume
+    -p volume prefix
+EOD
+}
+
+if [ -f /qserv-deploy/config/volume_list ]
+then
+    echo "Delete old volume_list file to continue and start over";
+    exit; 
+fi
+
+CLUSTER_CONFIG_DIR=/qserv-deploy/config
+# Check if openstack connection parameters are available
+OS_RC_FILE="$CLUSTER_CONFIG_DIR/os-openrc.sh"
+if [ -z "$OS_PROJECT_NAME" ]; then
+    if [ -f "$OS_RC_FILE" ]; then
+        . "$OS_RC_FILE"
+    else
+        echo "ERROR: Missing Openstack resource file: $OS_RC_FILE"
+        exit 1
+    fi
+    if [ -z "$OS_PROJECT_NAME" ]; then
+        echo "ERROR: Incorrect Openstack resource file: $OS_RC_FILE"
+        exit 1
+    fi
+fi
+
+while getopts ":t:p:" c; do
+    case $c in
+        t)
+            t=${OPTARG} ;;
+        p)
+            p=${OPTARG} ;;
+        \?)
+            usage ; exit ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${t}" ] || [ -z "${p}" ]; then
+    usage ; exit ;
+fi
+
+echo "first volume = ${t}"
+echo "volume prefix = ${p}"
+
+volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '{ print $2";"$1 }' |tr , =`
+volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
+volume_list={${volume_list}}
+
+echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "firstVolume = "$t >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "volumeId = "$volume_list >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+

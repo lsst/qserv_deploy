@@ -1,4 +1,4 @@
-#!/bin/sh
+!/bin/sh
 
 # Test script which performs the following tasks:
 
@@ -96,9 +96,9 @@ if [ -n "$DELETE" ]; then
     (
     . "$TF_DIR/terraform-setup.sh"
     cd "$TF_DIR"
-    . "$TF_DIR/get_volume_id.sh"
     terraform destroy --auto-approve \
-        --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
+        --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars" \
+        --var-file="$CLUSTER_CONFIG_DIR/volume_list.tfvars"
     cd ..
     rm -rf "$TF_DIR"
     )
@@ -118,10 +118,13 @@ if [ -n "$PROVISION" ]; then
     if [ ! -f "$TF_DIR/terraform-setup.sh" ]; then
         terraform init -from-module $OS_DIR/terraform
     fi 
-    . "$TF_DIR/terraform-setup.sh"
-    . "$TF_DIR/get_volume_id.sh"
+    if [ ! -f $CLUSTER_CONFIG_DIR/volume_list ]; then
+       echo "attach_volume = 0" >> $CLUSTER_CONFIG_DIR/volume_list;
+    fi
+    . "$TF_DIR/terraform-setup.sh" 
     terraform apply --auto-approve \
-        --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars"
+        --var-file="$CLUSTER_CONFIG_DIR/terraform.tfvars" \
+        --var-file="$CLUSTER_CONFIG_DIR/volume_list.tfvars"
     cd -
     )
     $QSERV_INSTALL_DIR/k8s/sysadmin/create-gnuparallel-slf.sh
