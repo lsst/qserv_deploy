@@ -118,8 +118,8 @@ if [ -n "$PROVISION" ]; then
     if [ ! -f "$TF_DIR/terraform-setup.sh" ]; then
         terraform init -from-module $OS_DIR/terraform
     fi 
-    if [ ! -f $CLUSTER_CONFIG_DIR/volume_list ]; then
-       echo "attach_volume = 0" >> $CLUSTER_CONFIG_DIR/volume_list;
+    if [ ! -f $CLUSTER_CONFIG_DIR/volume_list.tfvars ]; then
+       echo "attach_volume = 0" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars;
     fi
     . "$TF_DIR/terraform-setup.sh" 
     terraform apply --auto-approve \
