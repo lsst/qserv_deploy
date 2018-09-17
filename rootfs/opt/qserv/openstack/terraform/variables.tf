@@ -91,3 +91,8 @@ variable "attach_volume" {
     description = "1 if /qserv-deploy/config/volume_list file exist"
     default = 0
 }
+
+variable "mount_point" {
+    description = "mount point for all volume"
+    default = "/mnt/qserv"
+}

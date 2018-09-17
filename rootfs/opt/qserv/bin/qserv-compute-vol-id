@@ -9,7 +9,7 @@ Usage:`basename $0`
 EOD
 }
 
-if [ -f /qserv-deploy/config/volume_list ]
+if [ -f /qserv-deploy/config/volume_list.tfvars ]
 then
     echo "Delete old volume_list file to continue and start over";
     exit; 
@@ -31,30 +31,43 @@ if [ -z "$OS_PROJECT_NAME" ]; then
     fi
 fi
 
-while getopts ":t:p:" c; do
+while getopts ":t:p:m:" c; do
     case $c in
         t)
             t=${OPTARG} ;;
         p)
             p=${OPTARG} ;;
+        m)
+            m=${OPTARG} ;;
         \?)
             usage ; exit ;;
     esac
 done
 shift $((OPTIND-1))
 
-if [ -z "${t}" ] || [ -z "${p}" ]; then
+if [ -z "${t}" ] || [ -z "${p}" ] || [ -z "${m}" ]; then
     usage ; exit ;
 fi
 
 echo "first volume = ${t}"
 echo "volume prefix = ${p}"
+echo "mount_point = ${m}"
 
 volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '{ print $2";"$1 }' |tr , =`
 volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
 volume_list={${volume_list}}
 
+echo "# 1 if volumes must be attached, 0 otherwise" >>
+$CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+
+echo "# Number of first volume to attach" >>
+$CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "firstVolume = "$t >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+
+echo "# Map of volume numbers and their ID" >>
+$CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "volumeId = "$volume_list >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
+echo "# Mount point of all volume" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "mount_point = "$m >> $CLUSTER_CONFIG_DIR/volume_list.tfvars

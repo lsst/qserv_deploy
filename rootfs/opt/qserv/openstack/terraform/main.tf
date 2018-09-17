@@ -238,13 +238,12 @@ resource "null_resource" "cluster_mount_worker" {
 
   provisioner "remote-exec" {
     inline = [
-      "mount /dev/vdb1 /mnt/qserv",
+      "mount /dev/vdb1 ${var.mount_point}",
     ]
   }
 
   triggers {
-    cluster_instance_ips = "${join(",",
-openstack_compute_instance_v2.workers.*.ip)}"
+    cluster_instance_ips = "${join(",",local.cluster_ips)}"
   }
 }
 
@@ -264,12 +263,11 @@ resource "null_resource" "cluster_mount_master" {
 
   provisioner "remote-exec" {
     inline = [
-      "mount /dev/vdb1 /mnt/qserv",
+      "mount /dev/vdb1 ${var.mount_point}",
     ]
   }
 
   triggers {
-    cluster_instance_ips = "${join(",",
-openstack_compute_instance_v2.master.*.ip)}"
+    cluster_instance_ips = "${join(",",local.cluster_ips)}"
   }
 }
