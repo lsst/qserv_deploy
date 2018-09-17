@@ -2,10 +2,18 @@
 
 usage() { 
 cat << EOD
-Usage:`basename $0`
+Usage:`basename $0` [options]
 
-    -t number of first volume
-    -p volume prefix
+    Available options:
+        -t      number of first volume
+        -p      volume prefix
+        -m      mount point for volume
+
+Create a file contening required variables for attaching volume to workers
+Delete volume.tfvars or set attach_volume to 0 to NOT attach volume
+Delete volume.tfvars before reusing qserv-compute-vol-id
+
+example: qserv-compute-vol-id -t 100 -p vol-qserv- -m /mnt/qserv 
 EOD
 }
 

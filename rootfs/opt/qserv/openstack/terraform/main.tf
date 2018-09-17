@@ -238,7 +238,7 @@ resource "null_resource" "cluster_mount_worker" {
 
   provisioner "remote-exec" {
     inline = [
-      "mount /dev/vdb1 ${var.mount_point}",
+      "{if [ -f /dev/vdb1 ]; then mount /dev/vdb1 ${var.mount_point}; fi}",
     ]
   }
 
@@ -263,7 +263,7 @@ resource "null_resource" "cluster_mount_master" {
 
   provisioner "remote-exec" {
     inline = [
-      "mount /dev/vdb1 ${var.mount_point}",
+      "if [ -f /dev/vdb1 ]; then mount /dev/vdb1 ${var.mount_point}; fi",
     ]
   }
 
