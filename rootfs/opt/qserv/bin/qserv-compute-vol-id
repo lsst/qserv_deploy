@@ -65,12 +65,10 @@ volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '
 volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
 volume_list={${volume_list}}
 
-echo "# 1 if volumes must be attached, 0 otherwise" >>
-$CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "# 1 if volumes must be attached, 0 otherwise" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
-echo "# Number of first volume to attach" >>
-$CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "# Number of first volume to attach" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "firstVolume = "$t >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
 echo "# Map of volume numbers and their ID" >>
