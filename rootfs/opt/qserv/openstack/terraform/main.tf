@@ -222,3 +222,54 @@ resource "null_resource" "ssh_config" {
     cluster_instance_ips = "${join(",", local.cluster_ips)}"
   }
 }
+
+# Mount volume on worker
+resource "null_resource" "cluster_mount_worker" {
+  connection {
+    type        = "ssh"
+    host        = "${element(local.cluster_ips, count.index)}"
+    user        = "qserv"
+    private_key = "${file(var.ssh_private_key)}"
+
+    bastion_host = "${openstack_networking_floatingip_v2.floating_ip.address}"
+  }
+
+  count = "${var.attach_volume == 1 ? var.nb_worker : 0}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "mount /dev/vdb1 /mnt/qserv",
+    ]
+  }
+
+  triggers {
+    cluster_instance_ips = "${join(",",
+openstack_compute_instance_v2.workers.*.ip)}"
+  }
+}
+
+
+# Mount volume on master
+resource "null_resource" "cluster_mount_master" {
+  connection {
+    type        = "ssh"
+    host        = "${element(local.cluster_ips, count.index)}"
+    user        = "qserv"
+    private_key = "${file(var.ssh_private_key)}"
+
+    bastion_host = "${openstack_networking_floatingip_v2.floating_ip.address}"
+  }
+
+  count = "${var.attach_volume == 1 ? 1 : 0}"
+
+  provisioner "remote-exec" {
+    inline = [
+      "mount /dev/vdb1 /mnt/qserv",
+    ]
+  }
+
+  triggers {
+    cluster_instance_ips = "${join(",",
+openstack_compute_instance_v2.master.*.ip)}"
+  }
+}
