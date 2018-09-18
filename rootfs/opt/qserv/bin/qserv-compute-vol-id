@@ -75,4 +75,4 @@ echo "# Map of volume numbers and their ID" >> $CLUSTER_CONFIG_DIR/volume_list.t
 echo "volumeId = "$volume_list >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
 echo "# Mount point of all volume" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
-echo "mount_point = ""$m" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "mount_point = \"${m}\"" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
