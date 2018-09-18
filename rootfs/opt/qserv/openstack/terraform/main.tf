@@ -252,8 +252,7 @@ resource "null_resource" "cluster_mount_volume" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo sh -c \"if [ ! \"`lsblk | grep vdb`\" = \"\" ]; then sudo mount
-/dev/vdb1 /mnt/qserv ; fi\"",
+      "sudo sh -c \"if [ ! \"`lsblk | grep vdb`\" = \"\" ]; then sudo mount /dev/vdb1 /mnt/qserv ; fi\"",
     ]
   }
 
