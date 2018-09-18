@@ -15,15 +15,22 @@ locals {
 
 # Cluster lists
 locals {
-  worker_ips  = "${openstack_compute_instance_v2.workers.*.network.0.fixed_ip_v4}"
-  pet_ips     = "${list(openstack_compute_instance_v2.master.network.0.fixed_ip_v4, openstack_compute_instance_v2.orchestra.network.0.fixed_ip_v4, openstack_compute_instance_v2.gateway.network.0.fixed_ip_v4)}"
+  worker_ips  =
+"${openstack_compute_instance_v2.workers.*.network.0.fixed_ip_v4}"
+  pet_ips     =
+"${list(openstack_compute_instance_v2.master.network.0.fixed_ip_v4,
+openstack_compute_instance_v2.orchestra.network.0.fixed_ip_v4,
+openstack_compute_instance_v2.gateway.network.0.fixed_ip_v4)}"
   cluster_ips = "${concat(local.worker_ips, local.pet_ips)}"
 
   worker_names  = "${openstack_compute_instance_v2.workers.*.name}"
-  pet_names     = "${list(openstack_compute_instance_v2.master.name, openstack_compute_instance_v2.orchestra.name, openstack_compute_instance_v2.gateway.name)}"
+  pet_names     = "${list(openstack_compute_instance_v2.master.name,
+openstack_compute_instance_v2.orchestra.name,
+openstack_compute_instance_v2.gateway.name)}"
   cluster_names = "${concat(local.worker_names, local.pet_names)}"
 
-  cluster_hosts      = "${formatlist("%s	%s", local.cluster_ips, local.cluster_names)}"
+  cluster_hosts      = "${formatlist("%s    %s", local.cluster_ips,
+local.cluster_names)}"
   cluster_hosts_file = "${join("\n", local.cluster_hosts)}"
 }
 
@@ -81,7 +88,9 @@ data "template_file" "ssh_config" {
   template = "${file("ssh_config.tpl")}"
 
   vars {
-    cluster_hosts_config = "${join("\n\n", formatlist(data.template_file.ssh_host_config.rendered, local.cluster_names, local.cluster_ips))}"
+    cluster_hosts_config = "${join("\n\n",
+formatlist(data.template_file.ssh_host_config.rendered, local.cluster_names,
+local.cluster_ips))}"
   }
 }
 
@@ -105,7 +114,8 @@ resource "openstack_compute_instance_v2" "gateway" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
   security_groups = "${var.security_groups}"
-  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST", "${var.instance_prefix}gateway")}"
+  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST",
+"${var.instance_prefix}gateway")}"
 
   network {
     uuid = "${data.openstack_networking_network_v2.network.id}"
@@ -125,7 +135,8 @@ resource "openstack_compute_instance_v2" "orchestra" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
   security_groups = "${var.security_groups}"
-  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST", "${var.instance_prefix}orchestra-1")}"
+  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST",
+"${var.instance_prefix}orchestra-1")}"
 
   network {
     uuid = "${data.openstack_networking_network_v2.network.id}"
@@ -139,7 +150,8 @@ resource "openstack_compute_instance_v2" "master" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
   security_groups = "${var.security_groups}"
-  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST", "${var.instance_prefix}master-1")}"
+  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST",
+"${var.instance_prefix}master-1")}"
 
   network {
     uuid = "${data.openstack_networking_network_v2.network.id}"
@@ -162,7 +174,8 @@ resource "openstack_compute_instance_v2" "workers" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
   security_groups = "${var.security_groups}"
-  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST", "${var.instance_prefix}worker-${count.index + 1}")}"
+  user_data       = "${replace(data.template_file.cloud_init.rendered, "#HOST",
+"${var.instance_prefix}worker-${count.index + 1}")}"
 
   network {
     uuid = "${data.openstack_networking_network_v2.network.id}"
@@ -172,7 +185,8 @@ resource "openstack_compute_instance_v2" "workers" {
 # Attach volume to workers
 resource "openstack_compute_volume_attach_v2" "attach_volume_workers"{
   count = "${var.attach_volume == 1 ? var.nb_worker : 0 }"
-  instance_id = "${element(openstack_compute_instance_v2.workers.*.id,"${count.index}")}"
+  instance_id =
+"${element(openstack_compute_instance_v2.workers.*.id,"${count.index}")}"
   volume_id = "${lookup(var.volumeId,count.index+"${var.firstVolume+1}")}"
 }
 
@@ -192,7 +206,7 @@ resource "null_resource" "cluster_etc_hosts" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo sh -c \"cat << EOF > /etc/hosts\n127.0.0.1  localhost\n::1  localhost\n${local.cluster_hosts_file}\nEOF\"",
+      "sudo sh -c \"cat << EOF > /etc/hosts\n127.0.0.1  localhost\n::1 localhost\n${local.cluster_hosts_file}\nEOF\"",
     ]
   }
 
@@ -223,8 +237,8 @@ resource "null_resource" "ssh_config" {
   }
 }
 
-# Mount volume on worker
-resource "null_resource" "cluster_mount_worker" {
+# Mount volume
+resource "null_resource" "cluster_mount_volume" {
   connection {
     type        = "ssh"
     host        = "${element(local.cluster_ips, count.index)}"
@@ -234,40 +248,18 @@ resource "null_resource" "cluster_mount_worker" {
     bastion_host = "${openstack_networking_floatingip_v2.floating_ip.address}"
   }
 
-  count = "${var.attach_volume == 1 ? var.nb_worker : 0}"
+  count = "${var.nb_worker + 3}"
 
   provisioner "remote-exec" {
     inline = [
-      "{if [ -f /dev/vdb1 ]; then mount /dev/vdb1 ${var.mount_point}; fi}",
+      "sudo sh -c \"if [ ! \"`lsblk | grep vdb`\" = \"\" ]; then sudo mount
+/dev/vdb1 /mnt/qserv ; fi\"",
     ]
   }
 
   triggers {
-    cluster_instance_ips = "${join(",",local.cluster_ips)}"
+    cluster_instance_ips = "${join(",", local.cluster_ips)}"
   }
 }
 
 
-# Mount volume on master
-resource "null_resource" "cluster_mount_master" {
-  connection {
-    type        = "ssh"
-    host        = "${element(local.cluster_ips, count.index)}"
-    user        = "qserv"
-    private_key = "${file(var.ssh_private_key)}"
-
-    bastion_host = "${openstack_networking_floatingip_v2.floating_ip.address}"
-  }
-
-  count = "${var.attach_volume == 1 ? 1 : 0}"
-
-  provisioner "remote-exec" {
-    inline = [
-      "if [ -f /dev/vdb1 ]; then mount /dev/vdb1 ${var.mount_point}; fi",
-    ]
-  }
-
-  triggers {
-    cluster_instance_ips = "${join(",",local.cluster_ips)}"
-  }
-}

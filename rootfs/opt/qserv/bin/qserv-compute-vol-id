@@ -71,8 +71,7 @@ echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "# Number of first volume to attach" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "firstVolume = "$t >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
-echo "# Map of volume numbers and their ID" >>
-$CLUSTER_CONFIG_DIR/volume_list.tfvars
+echo "# Map of volume numbers and their ID" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "volumeId = "$volume_list >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 
 echo "# Mount point of all volume" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars

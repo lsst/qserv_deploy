@@ -15,7 +15,7 @@ variable "instance_prefix" {
 }
 
 variable "nb_worker" {
-  default     = 2
+  default     = 1
   description = "Number of worker nodes to spawn"
 }
 
