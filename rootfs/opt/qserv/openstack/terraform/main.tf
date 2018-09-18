@@ -248,12 +248,11 @@ resource "null_resource" "cluster_mount_volume" {
     bastion_host = "${openstack_networking_floatingip_v2.floating_ip.address}"
   }
 
-  count = "${var.nb_worker + 3}"
+  count = "${var.attach_volume == 1 ? var.nb_worker + 3 : 0}"
 
   provisioner "remote-exec" {
     inline = [
-      "sudo sh -c \"if [ ! \"`lsblk | grep vdb`\" = \"\" ]; then sudo mount
-/dev/vdb1 ${var.mount_point}] ; fi\"",
+      "sudo sh -c \"if [ ! \"`lsblk | grep vdb`\" = \"\" ]; then sudo mount /dev/vdb1 ${var.mount_point}] ; fi\"",
     ]
   }
 
