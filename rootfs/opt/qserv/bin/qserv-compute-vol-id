@@ -61,9 +61,8 @@ echo "first volume = ${t}"
 echo "volume prefix = ${p}"
 echo "mount_point = ${m}"
 
-volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '{ print $2";"$1 }' |tr , =`
-volume_list=`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' | sed -e "s/\${p}//g" | sed -e 's/;/=/g'`
-volume_list={${volume_list}}
+volume_list=`openstack volume list -c ID -c Name -f csv | grep ${p} | awk -F\, '{ print $2";"$1 }'`
+volume_list={`echo ${volume_list} | sed -e 's/\"\ \"/\",\"/g' -e "s/\${p}//g" -e 's/;/=/g'`}
 
 echo "# 1 if volumes must be attached, 0 otherwise" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
 echo "attach_volume=1" >> $CLUSTER_CONFIG_DIR/volume_list.tfvars
