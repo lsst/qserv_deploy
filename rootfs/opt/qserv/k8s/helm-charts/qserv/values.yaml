@@ -1,0 +1,13 @@
+# Default values for qserv.
+
+# Number of nodes (including master)
+replicaCount: 2
+
+image:
+    repository: qserv
+    tag: 828ff67
+    pullPolicy: IfNotPresent
+
+qserv:
+    domain: qserv
+    master: qserv-0
