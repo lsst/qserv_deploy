@@ -57,18 +57,18 @@ spec:
             - name: CZAR
               valueFrom:
                 configMapKeyRef:
-                  name: config-master
-                  key: czar
+                  name: config-domainnames
+                  key: CZAR
             - name: QSERV_DOMAIN
               valueFrom:
                 configMapKeyRef:
-                  name: config-master
-                  key: qserv_domain
+                  name: config-domainnames
+                  key: QSERV_DOMAIN
             - name: CZAR_DN
               valueFrom:
                 configMapKeyRef:
-                  name: config-master
-                  key: czar_dn
+                  name: config-domainnames
+                  key: CZAR_DN
           securityContext:
             capabilities:
               add:
@@ -89,8 +89,8 @@ spec:
             - name: CZAR_DN
               valueFrom:
                 configMapKeyRef:
-                  name: config-master
-                  key: czar_dn
+                  name: config-domainnames
+                  key: CZAR_DN
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           livenessProbe:
@@ -120,8 +120,8 @@ spec:
             - name: CZAR
               valueFrom:
                 configMapKeyRef:
-                  name: config-master
-                  key: czar
+                  name: config-domainnames
+                  key: CZAR
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           name: init-data-dir
@@ -130,8 +130,6 @@ spec:
             name: config-mariadb-configure
           - mountPath: /config-etc
             name: config-mariadb-etc
-          - mountPath: /config-sql/master
-            name: config-sql-master
           - mountPath: /config-sql/worker
             name: config-sql-worker
           - mountPath: /qserv/data
@@ -146,9 +144,6 @@ spec:
         - name: config-mariadb-start
           configMap:
             name: config-mariadb-start
-        - name: config-sql-master
-          configMap:
-            name: config-sql-master
         - name: config-sql-worker
           configMap:
             name: config-sql-worker
@@ -158,9 +153,9 @@ spec:
         - name: config-xrootd-start
           configMap:
             name: config-xrootd-start
-        - name: config-master
+        - name: config-domainnames
           configMap:
-            name: config-master
+            name: config-domainnames
         - name: config-mariadb-etc
           configMap:
             name: config-mariadb-etc
