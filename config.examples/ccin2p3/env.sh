@@ -21,12 +21,12 @@ HOST_TMP_DIR=/qserv/desc/tmp
 # Advanced configuration
 # ======================
 
-# CLUSTER_CONFIG_DIR is a global variable
+# QSERV_CFG_DIR is a global variable
 
 # FIXME: infrastructure should be abstracted from k8s
 # Parameters related to infrastructure,used to place containers:
 # - node hostnames
-. "$CLUSTER_CONFIG_DIR/env-infrastructure.sh"
+. "$QSERV_CFG_DIR/env-infrastructure.sh"
 
 # Container image name
 CONTAINER_IMAGE="qserv/qserv:${VERSION}"
