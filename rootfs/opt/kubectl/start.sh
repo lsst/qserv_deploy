@@ -87,12 +87,14 @@ minikube: $INI_MINIKUBE
 replicas: $WORKERS_COUNT
 EOF
 
-for service in "czar" "worker"
+kubectl apply $CACHE_OPT -f "${CFG_DIR}/statefulset-repl-db.yaml"
+for service in "czar" "worker" "repl-ctl"
 do
-    YAML_TPL="${CFG_DIR}/statefulset-${service}.yaml.tpl"
+    YAML_TPL="${CFG_DIR}/statefulset-${service}.tpl.yaml"
     YAML_FILE="${TMP_DIR}/statefulset-${service}.yaml"
     "$DIR"/yaml-builder.py -i "$INI_FILE" -r "$RESOURCE_DIR" -t "$YAML_TPL" -o "$YAML_FILE"
     kubectl apply $CACHE_OPT -f "$YAML_FILE"
 done
 
-kubectl apply $CACHE_OPT -f "${CFG_DIR}/statefulset-repl-db.yaml"
+# TODO study deployment instead of stateful set for repl-ctl
+# kubectl apply $CACHE_OPT -f "${CFG_DIR}/repl-ctl-service.yaml"
