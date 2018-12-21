@@ -29,7 +29,7 @@ INSERT INTO `config` VALUES ('database', 'services_pool_size', '32');
 -- Connection parameters for the Qserv Management Services
 
 INSERT INTO `config` VALUES ('xrootd', 'auto_notify',         '1');
-INSERT INTO `config` VALUES ('xrootd', 'host',                'localhost');
+INSERT INTO `config` VALUES ('xrootd', 'host',                'czar-0.qserv');
 INSERT INTO `config` VALUES ('xrootd', 'port',                '1094');
 INSERT INTO `config` VALUES ('xrootd', 'request_timeout_sec', '600');
 
