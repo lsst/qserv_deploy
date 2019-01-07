@@ -26,11 +26,14 @@ Usage: `basename $0` [options] [cmd]
 EOD
 }
 
+MOUNT_SSH=true
+
 # get the options
-while getopts dh c ; do
+while getopts dhs c ; do
     case $c in
         d) QSERV_DEV=true ;;
         h) usage ; exit 0 ;;
+        s) MOUNT_SSH=false ;;
         \?) usage ; exit 2 ;;
     esac
 done
@@ -53,8 +56,12 @@ fi
 MOUNTS="-v $QSERV_CFG_DIR:/etc/qserv-deploy "
 
 CONTAINER_HOME="$HOME"
-SSH_DIR="$HOME/.ssh"
-MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
+
+if [ "$MOUNT_SSH" = true ]
+then
+    SSH_DIR="$HOME/.ssh"
+    MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
+fi
 
 MOUNTS="$MOUNTS -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
 
