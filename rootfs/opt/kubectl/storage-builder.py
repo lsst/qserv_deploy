@@ -47,7 +47,7 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
     with open(yaml_tpl, 'r') as f:
         yaml_storage = yaml.load(f)
 
-    yaml_storage['metadata']['name'] = "qserv-{}-qserv-{}".format(data_name, data_id)
+    yaml_storage['metadata']['name'] = "qserv-{}-{}".format(data_name, data_id)
     yaml_storage['spec']['selector']['matchLabels']['dataid'] = data_id
 
     if minikube:
