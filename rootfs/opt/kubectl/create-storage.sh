@@ -32,7 +32,7 @@ while getopts hp: c ; do
 done
 shift "$((OPTIND-1))"
 
-if [ $# -ne 1  ] ; then
+if [ $# -ne 2  ] ; then
     usage
     exit 2
 fi
@@ -44,6 +44,7 @@ elif [ "$MINIKUBE" = true ]; then
 fi
 
 DATA_PATH="$1"
+DATA_NAME="$2"
 
 STORAGE_OUTPUT_DIR="$QSERV_CFG_DIR"/storage
 
