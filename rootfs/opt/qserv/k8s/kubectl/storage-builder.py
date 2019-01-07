@@ -13,12 +13,7 @@ import os.path
 import sys
 import yaml
 
-def _path2name(path):
-    return path.replace("qserv", "").strip("/").replace("/", "-")
-
-def _build_yaml(data_path, hostname, data_id, output_dir, template_dir):
-
-    data_name =_path2name(data_path)
+def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_dir):
 
     minikube = True
     if hostname:
@@ -73,9 +68,12 @@ if __name__ == "__main__":
         parser.add_argument('-p', '--path', dest='data_path',
                             required=True, metavar='<hostPath>',
                             help='Path on the host')
+        parser.add_argument('-n', '--name', dest='data_name',
+                            required=True, metavar='<dataName>',
+                            help='Name of the data')
         parser.add_argument('-H', '--hostname', dest='hostname',
                             required=False, metavar='<hostname>',
-                            help='Hostname of the node, do not fill it for minikube')
+                            help='Hostname of the node, leave blank for minikube')
         parser.add_argument('-d', '--dataid', dest='data_id',
                             required=True, metavar='<dataId>',
                             help='Data ID')
@@ -89,13 +87,7 @@ if __name__ == "__main__":
 
         args = parser.parse_args()
 
-        data_path = args.data_path
-        hostname = args.hostname
-        data_id = args.data_id
-        output_dir = args.output_dir
-        template_dir = args.template_dir
-
-        _build_yaml(data_path, hostname, data_id, output_dir, template_dir)
+        _build_yaml(args.data_path, args.data_name, args.hostname, args.data_id, args.output_dir, args.template_dir)
 
     except Exception as e:
         print(e)

@@ -15,7 +15,7 @@ CLUSTER_CONFIG_DIR="${CLUSTER_CONFIG_DIR:-/qserv-deploy/config}"
 usage() {
     cat << EOD
 
-    Usage: $(basename "$0") <hostPath>
+    Usage: $(basename "$0") <hostPath> <dataName>
 
     Available options:
       -h          this message
@@ -61,7 +61,7 @@ do
     else
         OPT_HOST="-H $host"
     fi
-    "$DIR"/storage-builder.py -p "$DATA_PATH" $OPT_HOST -d "$DATA_ID" -o "$STORAGE_OUTPUT_DIR"
+    "$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$STORAGE_OUTPUT_DIR"
     DATA_ID=$((DATA_ID+1))
 done
 
