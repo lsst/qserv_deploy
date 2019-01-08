@@ -23,8 +23,8 @@ $QSERV_DEPLOY/rootfs/opt/qserv/k8s/sysadmin/create-gnuparallel-slf.sh
 
 # Setup Kubernetes
 
-Because Kerberos, scripts below must be runned directly on host, and not
-inside qserv-deploy container:
+Because of Kerberos, the scrips below must be run directly on the host and
+not inside the qserv-deploy container.
 
 ```
 # Create cluster
