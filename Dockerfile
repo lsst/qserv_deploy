@@ -21,6 +21,17 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     apt-key add - && \
     apt-get -y update && apt-get -y install google-cloud-sdk
 
+# Install helm
+ENV HELM_VERSION 2.11.0
+RUN wget -O /tmp/helm.tgz \
+    https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    cd tmp && \
+    tar zxvf /tmp/helm.tgz && \
+    chmod +x /tmp/linux-amd64/helm && \
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm-${HELM_VERSION} && \
+    ln -s /usr/local/bin/helm-${HELM_VERSION} /usr/local/bin/helm
+
+
 # Install kubectl
 ENV KUBECTL_VERSION 1.11.0
 RUN wget -O /usr/local/bin/kubectl \
@@ -37,21 +48,15 @@ RUN wget -O /tmp/terraform.zip \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     chmod +x /usr/local/bin/terraform
 
-ENV QSERV_INSTALL_DIR /opt/qserv
+ENV QSERV_INSTALL_DIR /opt
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
-ENV CLUSTER_CONFIG_DIR /qserv-deploy/config
-ENV KUBECONFIG "$CLUSTER_CONFIG_DIR"/kubeconfig
+ENV QSERV_CFG_DIR /etc/qserv-deploy
+ENV KUBECONFIG "$QSERV_CFG_DIR"/kubeconfig
 
 WORKDIR /qserv-deploy
 
 # Install kubectl completion
 # setup autocomplete in bash, bash-completion package should be installed first.
-RUN mkdir .bash && kubectl completion bash > .bash/kubectl.completion
-
-# setup autocomplete in zsh
-RUN mkdir .zsh && kubectl completion bash > .zsh/kubectl.completion
+RUN kubectl completion bash > /etc/kubectl.completion
 
 COPY rootfs /
-
-RUN ln -s /opt/qserv/k8s/sysadmin /qserv-deploy/sysadmin && \
-    ln -s /opt/qserv/k8s/kubectl /qserv-deploy/kubectl
