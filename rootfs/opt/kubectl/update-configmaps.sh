@@ -75,7 +75,7 @@ do
     kubectl create configmap --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc
 
     kubectl delete configmap --ignore-not-found=true config-${service}-start
-    kubectl create configmap --from-file="$CONFIGMAP_DIR/$service/start.sh" config-${service}-start
+    kubectl create configmap --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start
 done
 
 echo "Create kubernetes secrets for Qserv"
