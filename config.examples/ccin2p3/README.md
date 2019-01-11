@@ -27,6 +27,9 @@ Because of Kerberos, the scrips below must be run directly on the host and
 not inside the qserv-deploy container.
 
 ```
+# Source configuration
+. $QSERV_CFG_DIR/env_nocontainer.sh
+
 # Create cluster
 $QSERV_DEPLOY/rootfs/opt/qserv/k8s/sysadmin/kube-create.sh
 
