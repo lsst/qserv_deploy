@@ -13,15 +13,10 @@ VERSION=828ff67
 # =====================
 
 # Data directory location on docker host
-# HOST_DATA_DIR=/qserv/data
+HOST_DATA_DIR=/qserv/data
 
 # Qserv temporary directory location on docker host
 HOST_TMP_DIR=/qserv/tmp
-
-# Use for debugging purpose
-# Alternate command to execute at container startup
-# in order no to launch Qserv at container startup
-#ALT_CMD="tail -f /dev/null"
 
 # Advanced configuration
 # ======================

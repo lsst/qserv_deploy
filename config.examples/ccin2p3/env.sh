@@ -7,16 +7,20 @@
 #  - a git ticket branch but with _ instead of /
 #    example: tickets_DM-7139, or dev
 #  - a git hash
-VERSION=828ff67
+VERSION=d7fc83f
 
 # `docker run` settings
 # =====================
 
+# WARN MINIKUBE must have 3 variables below commented
+# if not all Qserv pods will use same data directories
+# and Qserv may crash
+
 # Data directory location on docker host
-HOST_DATA_DIR=/qserv/desc/data
+HOST_DATA_DIR=/qserv/data
 
 # Qserv temporary directory location on docker host
-HOST_TMP_DIR=/qserv/desc/tmp
+# HOST_TMP_DIR=/qserv/tmp
 
 # Advanced configuration
 # ======================
@@ -30,18 +34,3 @@ HOST_TMP_DIR=/qserv/desc/tmp
 
 # Container image name
 CONTAINER_IMAGE="qserv/qserv:${VERSION}"
-
-# Pods names
-# ==========
-
-MASTER_POD='master'
-WORKER_POD_FORMAT='worker-%g'
-
-# List of worker pods (and containers) names
-j=1
-WORKER_PODS=''
-for host in $WORKERS;
-do
-    WORKER_PODS="$WORKER_PODS worker-$j"
-    j=$((j+1));
-done
