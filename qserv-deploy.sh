@@ -55,7 +55,7 @@ fi
 
 MOUNTS="-v $QSERV_CFG_DIR:/etc/qserv-deploy "
 
-CONTAINER_HOME="$HOME"
+CONTAINER_HOME="/home/$USER"
 
 if [ "$MOUNT_SSH" = true ]
 then
@@ -89,7 +89,8 @@ if [ "$MOUNT_DOT_MK" = true ]; then
 fi
 
 docker run -it --net=host --rm -l config-path=$QSERV_CFG_DIR \
+    -e HOME="$CONTAINER_HOME" \
     --user=$(id -u):$(id -g $USER) \
     $MOUNTS \
-    -w $HOME \
+    -w $CONTAINER_HOME \
     qserv/deploy:$VERSION $CMD
