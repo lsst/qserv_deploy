@@ -10,6 +10,6 @@ set -e
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
-"$QSERV_INSTALL_DIR"/kubectl/create-storage.sh "/qserv/desc/data" "data"
+"$QSERV_INSTALL_DIR"/kubectl/create-local-volumes.sh "/qserv/desc"
 "$QSERV_INSTALL_DIR"/kubectl/start.sh
 "$QSERV_INSTALL_DIR"/kubectl/wait-statefulset-ready.sh

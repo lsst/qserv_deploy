@@ -29,14 +29,14 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
         with open(yaml_tpl, 'r') as f:
             yaml_storage = yaml.load(f)
 
-        yaml_storage['metadata']['name'] = "qserv-{}-pv-{}".format(data_name, data_id)
+        yaml_storage['metadata']['name'] = "{}-pv-{}".format(data_name, data_id)
         yaml_storage['metadata']['labels']['dataid'] = data_id
 
         node_name = yaml_storage['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values']
         node_name[0] = hostname
         yaml_storage['spec']['local']['path'] = data_path
 
-        yaml_fname = "qserv-{}-pv-{}.yaml".format(data_name, data_id)
+        yaml_fname = "{}-pv-{}.yaml".format(data_name, data_id)
         yaml_fname = os.path.join(output_dir, yaml_fname)
         with open( yaml_fname, "w") as f:
             f.write(yaml.dump(yaml_storage, default_flow_style=False))
@@ -47,7 +47,7 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
     with open(yaml_tpl, 'r') as f:
         yaml_storage = yaml.load(f)
 
-    yaml_storage['metadata']['name'] = "qserv-{}-{}".format(data_name, data_id)
+    yaml_storage['metadata']['name'] = "{}-{}".format(data_name, data_id)
     yaml_storage['spec']['selector']['matchLabels']['dataid'] = data_id
 
     if minikube:
@@ -55,7 +55,7 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
         # https://github.com/kubernetes/minikube/blob/master/deploy/addons/storageclass/storageclass.yaml
         yaml_storage['spec']['storageClassName'] = 'standard'
 
-    yaml_fname = "qserv-{}-pvc-{}.yaml".format(data_name, data_id)
+    yaml_fname = "{}-pvc-{}.yaml".format(data_name, data_id)
     yaml_fname = os.path.join(output_dir, yaml_fname)
     with open( yaml_fname, "w") as f:
         f.write(yaml.dump(yaml_storage, default_flow_style=False))
