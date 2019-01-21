@@ -11,6 +11,21 @@
 set -e
 set -x
 
+# Require root privileges
+##
+MARIADB_CONF="/config-etc/my.cnf"
+if [ -e "$MARIADB_CONF" ]; then
+    mkdir -p /etc/mysql
+    ln -sf "$MARIADB_CONF" /etc/mysql/my.cnf
+fi
+
+if ! id 1000 > /dev/null 2>&1
+then
+    useradd qserv --uid 1000 --no-create-home
+fi
+##
+##
+
 if [ "$HOSTNAME" = "$REPL_DB" ]; then
     MYSQL_INSTALL_DB="mysql_install_db"
 else
@@ -25,12 +40,6 @@ MYSQLD_SOCKET="$MYSQLD_DATA_DIR/mysql.sock"
 # TODO: Set password using k8s
 MYSQLD_PASSWORD_ROOT="CHANGEME"
 SQL_DIR="/config-sql"
-
-MARIADB_CONF="/config-etc/my.cnf"
-if [ -e "$MARIADB_CONF" ]; then
-    mkdir -p /etc/mysql
-    ln -sf "$MARIADB_CONF" /etc/mysql/my.cnf
-fi
 
 EXCLUDE_DIR1="lost+found"
 DATA_FILES=$(find "$DATA_DIR" -mindepth 1 ! -name "$EXCLUDE_DIR1")
@@ -89,7 +98,7 @@ then
         echo "-- Deploy scisql plugin"
         # WARN: SciSQL shared library (libcisql*.so) deployed by command
         # below will be removed at each container startup.
-        # That's why this shared library is currently 
+        # That's why this shared library is currently
         # installed in mysql plugin directory at image creation.
         echo "$MYSQLD_PASSWORD_ROOT" | scisql-deploy.py --mysql-dir="$MYSQL_DIR" \
             --mysql-socket="$MYSQLD_SOCKET"
