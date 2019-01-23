@@ -7,7 +7,7 @@
 #  - a git ticket branch but with _ instead of /
 #    example: tickets_DM-7139, or dev
 #  - a git hash
-VERSION=828ff67
+VERSION=d7fc83f
 
 # `docker run` settings
 # =====================
