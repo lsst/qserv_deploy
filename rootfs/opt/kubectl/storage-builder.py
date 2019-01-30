@@ -1,4 +1,25 @@
 #!/usr/bin/env python3
+
+# LSST Data Management System
+# Copyright 2014 LSST Corporation.
+# 
+# This product includes software developed by the
+# LSST Project (http://www.lsst.org/).
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the LSST License Statement and 
+# the GNU General Public License along with this program.  If not, 
+# see <http://www.lsstcorp.org/LegalNotices/>.
+
 """
 Create k8s Persistent Volumes and Persitent Volume Claims
 
@@ -29,14 +50,14 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
         with open(yaml_tpl, 'r') as f:
             yaml_storage = yaml.load(f)
 
-        yaml_storage['metadata']['name'] = "qserv-{}-pv-{}".format(data_name, data_id)
+        yaml_storage['metadata']['name'] = "{}-pv-{}".format(data_name, data_id)
         yaml_storage['metadata']['labels']['dataid'] = data_id
 
         node_name = yaml_storage['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values']
         node_name[0] = hostname
         yaml_storage['spec']['local']['path'] = data_path
 
-        yaml_fname = "qserv-{}-pv-{}.yaml".format(data_name, data_id)
+        yaml_fname = "{}-pv-{}.yaml".format(data_name, data_id)
         yaml_fname = os.path.join(output_dir, yaml_fname)
         with open( yaml_fname, "w") as f:
             f.write(yaml.dump(yaml_storage, default_flow_style=False))
@@ -47,7 +68,7 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
     with open(yaml_tpl, 'r') as f:
         yaml_storage = yaml.load(f)
 
-    yaml_storage['metadata']['name'] = "qserv-{}-qserv-{}".format(data_name, data_id)
+    yaml_storage['metadata']['name'] = "{}-{}".format(data_name, data_id)
     yaml_storage['spec']['selector']['matchLabels']['dataid'] = data_id
 
     if minikube:
@@ -55,7 +76,7 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
         # https://github.com/kubernetes/minikube/blob/master/deploy/addons/storageclass/storageclass.yaml
         yaml_storage['spec']['storageClassName'] = 'standard'
 
-    yaml_fname = "qserv-{}-pvc-{}.yaml".format(data_name, data_id)
+    yaml_fname = "{}-pvc-{}.yaml".format(data_name, data_id)
     yaml_fname = os.path.join(output_dir, yaml_fname)
     with open( yaml_fname, "w") as f:
         f.write(yaml.dump(yaml_storage, default_flow_style=False))
