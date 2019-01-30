@@ -22,7 +22,7 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     apt-get -y update && apt-get -y install google-cloud-sdk
 
 # Install helm
-ENV HELM_VERSION 2.11.0
+ENV HELM_VERSION 2.12.3
 RUN wget -O /tmp/helm.tgz \
     https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
     cd tmp && \
@@ -33,7 +33,9 @@ RUN wget -O /tmp/helm.tgz \
 
 
 # Install kubectl
-ENV KUBECTL_VERSION 1.11.0
+# To get latest stable release:
+# curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
+ENV KUBECTL_VERSION 1.13.3
 RUN wget -O /usr/local/bin/kubectl \
     https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl
@@ -51,7 +53,7 @@ RUN wget -O /tmp/terraform.zip \
 ENV QSERV_INSTALL_DIR /opt
 ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
 ENV QSERV_CFG_DIR /etc/qserv-deploy
-ENV KUBECONFIG "$QSERV_CFG_DIR"/kubeconfig
+ENV QSERV_TMP_DIR /tmp/qserv-deploy
 
 # Install kubectl completion
 # setup autocomplete in bash, bash-completion package should be installed first.

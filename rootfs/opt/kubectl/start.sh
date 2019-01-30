@@ -38,10 +38,6 @@ CONFIGMAP_DIR="${DIR}/configmap"
 mkdir -p "${QSERV_CFG_DIR}/tmp"
 TMP_DIR=$(mktemp -d --tmpdir="${QSERV_CFG_DIR}/tmp" --suffix=-qserv-deploy-yaml)
 
-# For in2p3 cluster: k8s schema cache must not be on AFS
-CACHE_DIR=$(mktemp -d --tmpdir="${QSERV_CFG_DIR}/tmp" --suffix=-kube-$USER)
-CACHE_OPT="--cache-dir=$CACHE_DIR/schema"
-
 usage() {
   cat << EOD
 
@@ -74,10 +70,10 @@ INI_FILE="${TMP_DIR}/statefulset.ini"
 "$DIR"/update-configmaps.sh
 
 echo "Create headless service for Qserv"
-kubectl apply $CACHE_OPT -f ${CFG_DIR}/qserv-headless-service.yaml
+kubectl apply -f ${CFG_DIR}/qserv-headless-service.yaml
 
 echo "Create nodeport service for Qserv"
-kubectl apply $CACHE_OPT -f ${CFG_DIR}/qserv-nodeport-service.yaml
+kubectl apply -f ${CFG_DIR}/qserv-nodeport-service.yaml
 
 echo "Create kubernetes pod for Qserv statefulset"
 
@@ -107,14 +103,14 @@ minikube: $INI_MINIKUBE
 replicas: $WORKERS_COUNT
 EOF
 
-kubectl apply $CACHE_OPT -f "${CFG_DIR}/statefulset-repl-db.yaml"
+kubectl apply -f "${CFG_DIR}/statefulset-repl-db.yaml"
 for service in "czar" "worker" "repl-ctl"
 do
     YAML_TPL="${CFG_DIR}/statefulset-${service}.tpl.yaml"
     YAML_FILE="${TMP_DIR}/statefulset-${service}.yaml"
     "$DIR"/yaml-builder.py -i "$INI_FILE" -r "$RESOURCE_DIR" -t "$YAML_TPL" -o "$YAML_FILE"
-    kubectl apply $CACHE_OPT -f "$YAML_FILE"
+    kubectl apply -f "$YAML_FILE"
 done
 
 # TODO study deployment instead of stateful set for repl-ctl
-# kubectl apply $CACHE_OPT -f "${CFG_DIR}/repl-ctl-service.yaml"
+# kubectl apply -f "${CFG_DIR}/repl-ctl-service.yaml"

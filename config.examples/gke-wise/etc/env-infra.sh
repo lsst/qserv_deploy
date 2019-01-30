@@ -1,3 +1,11 @@
+# Parameters related to GKE instructure
+
+# Size of memory (RAM) for czar pod(s)
+MEM_REQUEST="400G"
+
+# Size of GKE volumes for all pods
+STORAGE_SIZE="3Ti"
+
 # Machine type for node pools
 MTYPE_CZAR="n1-highmem-64"
 MTYPE_DEFAULT="n1-standard-8"
@@ -14,6 +22,8 @@ SUBNETWORK="projects/$PROJECT/regions/$REGION/subnetworks/default"
 ZONE="${REGION}-a"
 
 # Size for node pools
-SIZE_DEFAULT=1
-SIZE_CZAR=0
-SIZE_WORKER=0
+SIZE_DEFAULT=0
+SIZE_CZAR=1
+SIZE_WORKER=40
+
+GKE=true

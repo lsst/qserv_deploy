@@ -45,10 +45,4 @@ echo "WARN: require sudo access to $ORCHESTRATOR"
 ssh $SSH_CFG_OPT "$ORCHESTRATOR" 'sudo cat /etc/kubernetes/admin.conf' \
 	> "$KUBECONFIG"
 
-# Hack for Openstack (use ssh tunnel)
-if [ "$OPENSTACK" = true ]; then
-    "ssh-tunnel"
-    sed -i -- 's,server: https://.*\(:[0-9]*\),server: https://localhost\1,g' \
-        "$KUBECONFIG"
-fi
 echo "SUCCESS: $KUBECONFIG created"

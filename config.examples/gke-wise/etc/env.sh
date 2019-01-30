@@ -30,7 +30,7 @@ HOST_DATA_DIR=/qserv/data
 # FIXME: infrastructure should be abstracted from k8s
 # Parameters related to infrastructure,used to place containers:
 # - node hostnames
-. "$QSERV_CFG_DIR/env-infrastructure.sh"
+. "$QSERV_CFG_DIR/env-infra.sh"
 
 # Container image name
 CONTAINER_IMAGE="qserv/qserv:${VERSION}"

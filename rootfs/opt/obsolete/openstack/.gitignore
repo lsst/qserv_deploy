@@ -1,9 +1,0 @@
-/ssh_config
-/env-infrastructure.sh
-/*-openrc.sh
-/*.conf
-*.pyc
-*.swp
-*.tfstate
-.terraform/
-*.tfstate.backup

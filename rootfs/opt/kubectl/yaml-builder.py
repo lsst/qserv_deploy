@@ -221,7 +221,7 @@ if __name__ == "__main__":
                 vct_resources = volumeClaimTemplates[0]['spec']['resources']
                 vct_resources['requests'] = dict()
                 if not config.get('spec', 'storage_size'):
-                    raise ValueError('Undefined storage size in env-infrastructure.sh')
+                    raise ValueError('Undefined storage size in env-infra.sh')
                 vct_resources['requests']['storage'] = config.get('spec',
                                                                 'storage_size')
             else:

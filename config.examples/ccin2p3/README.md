@@ -14,7 +14,7 @@ mkdir -p $QSERV_CFG_DIR
 cp -r $QSERV_DEPLOY/config.examples/ccin2p3/* $QSERV_CFG_DIR 
 ```
 
-Set nodes names in `/qserv/kubernetes/upper/env-infrastructure.sh`
+Set nodes names in `/qserv/kubernetes/upper/env-infra.sh`
 
 Create gnu-parallel configuration file:
 ```shell

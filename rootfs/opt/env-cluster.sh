@@ -2,7 +2,7 @@
 # (ssh credentials, machine names)
 
 # Required for bare-metal
-export KUBECONFIG="${QSERV_CFG_DIR}/kubeconfig"
+export KUBECONFIG="${QSERV_CFG_DIR}/dot-kube/config"
 
 # ssh credentials, optional
 SSH_CFG="$QSERV_CFG_DIR/ssh_config"
@@ -15,7 +15,7 @@ else
 fi
 
 # Machine names
-ENV_INFRASTRUCTURE_FILE="$QSERV_CFG_DIR/env-infrastructure.sh"
+ENV_INFRASTRUCTURE_FILE="$QSERV_CFG_DIR/env-infra.sh"
 if [ -r "$ENV_INFRASTRUCTURE_FILE" ]; then
     . "$ENV_INFRASTRUCTURE_FILE"
 else

@@ -7,7 +7,11 @@
 
 set -e
 
+<<<<<<< HEAD
 STABLE_VERSION="6adbaa5" 
+=======
+STABLE_VERSION="1cfbb62"
+>>>>>>> 35f7467... Improve configuration examples
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -17,27 +21,34 @@ usage() {
 Usage: `basename $0` [options] [cmd]
 
   Available options:
-    -C          Path to configuration directory (default to QSERV_CFG_DIR)
-    -d          Run in development mode (i.e. mount source files on host)
-    -h          This message
-    -s          Do not attache host volume \$HOME/.ssh inside container
+    -C <cfgdir>  Path to configuration directory (default to \$QSERV_CFG_DIR),
+    -d           Run in development mode (i.e. mount source files on host)
+    -g <dir>     Path to gcloud configuration directory
+                 Default to <cfgdir>/dot-config
+    -h           This message
+    -M           Mount \$HOME/.minikube inside container
+    -s <dir>     Path to ssh configuration directory.
+                 Default to \$HOME/.ssh
 
   Run a container with all the Qserv deployment tools inside.
 
-  Pre-requisites: QSERV_CFG_DIR env variable can be defined and exported.
+  Pre-requisites:
+    - QSERV_CFG_DIR env variable can be defined and exported.
+    - Host volumes must be reachables by docker daemon
 
 EOD
 }
 
-MOUNT_SSH=true
 
 # get the options
-while getopts C:dhs c ; do
+while getopts C:dg:hMs: c ; do
     case $c in
         C) QSERV_CFG_DIR="$OPTARG" ;;
         d) QSERV_DEV=true ;;
+        g) GCLOUD_DIR="$OPTARG" ;;
         h) usage ; exit 0 ;;
-        s) MOUNT_SSH=false ;;
+        M) MOUNT_DOT_MK=true ;;
+        s) SSH_DIR="$OPTARGS" ;;
         \?) usage ; exit 2 ;;
     esac
 done
@@ -52,26 +63,39 @@ fi
 
 VERSION=${DEPLOY_VERSION:-$STABLE_VERSION}
 
-if [ ! -d "$QSERV_CFG_DIR" ]; then
-    >&2 echo "ERROR: Incorrect QSERV_CFG_DIR parameter: \"$QSERV_CFG_DIR\""
+if [ -z "$QSERV_CFG_DIR" ]; then
+    >&2 echo "ERROR: Unset QSERV_CFG_DIR parameter \
+(set it as env variable or use -C option)"
+    usage
+    exit 1
+elif [ ! -d "$QSERV_CFG_DIR" ]; then
+    >&2 echo "ERROR: Non-existing directory for QSERV_CFG_DIR parameter: \"$QSERV_CFG_DIR\""
+    usage
     exit 1
 fi
 
-MOUNTS="-v $QSERV_CFG_DIR:/etc/qserv-deploy "
+if [ -z "$GCLOUD_DIR" ];
+then
+    GCLOUD_DIR="$QSERV_CFG_DIR/dot-config"
+fi
+
+if [ -z "$SSH_DIR" ];
+then
+    SSH_DIR="$HOME/.ssh"
+fi
+
+MOUNTS="-v $QSERV_CFG_DIR/etc:/etc/qserv-deploy "
+MOUNTS="$MOUNTS -v $QSERV_CFG_DIR/tmp:/tmp/qserv-deploy "
 
 CONTAINER_HOME="/home/$USER"
 
-if [ "$MOUNT_SSH" = true ]
-then
-    SSH_DIR="$HOME/.ssh"
-    MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
-fi
-
-MOUNTS="$MOUNTS -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
-
-GCLOUD_DIR="$QSERV_CFG_DIR/gcloud"
 mkdir -p $GCLOUD_DIR
 MOUNTS="$MOUNTS -v $GCLOUD_DIR:$CONTAINER_HOME/.config"
+MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
+
+# TODO create group and password file to enable NFS4 support
+MOUNTS="$MOUNTS -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
+
 
 DOT_KUBE_DIR="$QSERV_CFG_DIR/dot-kube"
 mkdir -p "$DOT_KUBE_DIR"
