@@ -1,11 +1,9 @@
 # Create a GKE cluster for Qserv
 
 ```shell
-# Create env.sh symlink to desired configuration
-ln -s env.qserv-cluster.sh env.sh
 
 # Edit file to set up cluster attribute
-vi env.sh
+vi /etc/qserv_deploy/env-gke.sh
 
 # Create GKE cluster
 ./create-gke-cluster.sh

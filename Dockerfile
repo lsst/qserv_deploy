@@ -53,8 +53,6 @@ ENV PATH="${QSERV_INSTALL_DIR}/bin:${PATH}"
 ENV QSERV_CFG_DIR /etc/qserv-deploy
 ENV KUBECONFIG "$QSERV_CFG_DIR"/kubeconfig
 
-WORKDIR /qserv-deploy
-
 # Install kubectl completion
 # setup autocomplete in bash, bash-completion package should be installed first.
 RUN kubectl completion bash > /etc/kubectl.completion

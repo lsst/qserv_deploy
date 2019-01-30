@@ -3,7 +3,6 @@
 set -e
 set -x
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/env.sh"
+. "$QSERV_CFG_DIR/env-gke.sh"
 
 gcloud container clusters get-credentials "$CLUSTER" --zone "$ZONE" --project "$PROJECT"

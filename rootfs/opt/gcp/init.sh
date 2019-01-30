@@ -1,7 +1,6 @@
 #!/bin/bash
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/env.sh"
+. "$QSERV_CFG_DIR/env-gke.sh"
 
 gcloud auth login
 gcloud config set project $PROJECT

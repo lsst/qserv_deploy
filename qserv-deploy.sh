@@ -16,12 +16,13 @@ usage() {
 Usage: `basename $0` [options] [cmd]
 
   Available options:
+    -C          Path to configuration directory (default to QSERV_CFG_DIR)
     -d          run in development mode (i.e. mount source files on host)
     -h          this message
 
   Run a docker container with all the Qserv deployment tools inside.
 
-  Pre-requisites: QSERV_CFG_DIR env variable must be defined and exported.
+  Pre-requisites: QSERV_CFG_DIR env variable can be defined and exported.
 
 EOD
 }
@@ -29,8 +30,9 @@ EOD
 MOUNT_SSH=true
 
 # get the options
-while getopts dhs c ; do
+while getopts C:dhs c ; do
     case $c in
+        C) QSERV_CFG_DIR="$OPTARG" ;;
         d) QSERV_DEV=true ;;
         h) usage ; exit 0 ;;
         s) MOUNT_SSH=false ;;

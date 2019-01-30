@@ -26,7 +26,7 @@ spec:
           env:
             - name: WORKER_COUNT
               value: <WORKER_COUNT>
-          image: "qserv/replica:tools-w.2018.16-496-g28484e5-dirty"
+          image: "qserv/replica:tools-w.2018.16-556-g62efc42-dirty"
           imagePullPolicy: Always
           securityContext:
             runAsUser: 1000

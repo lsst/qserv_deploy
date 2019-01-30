@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/env.sh"
+. "$QSERV_CFG_DIR/env-gke.sh"
 
 usage() {
   cat << EOD
@@ -18,7 +18,8 @@ usage() {
   Available options:
     -h          this message
 
-  Resize qserv node pools to value set in ${DIR}/env.sh for GKE cluster
+  Resize qserv node pools to value set in $\\SIZE_WORKER \\SIZE_CZAR \
+  (see /etc/qserv-deploy/) for GKE cluster
 
 EOD
 }

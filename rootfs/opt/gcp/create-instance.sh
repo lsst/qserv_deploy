@@ -3,8 +3,7 @@
 set -e
 set -x
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/env.sh"
+. "$QSERV_CFG_DIR/env-gke.sh"
 
 INSTANCE="fjammes"
 
