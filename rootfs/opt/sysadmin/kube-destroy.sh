@@ -13,13 +13,17 @@ DIR=$(cd "$(dirname "$0")"; pwd -P)
 "$DIR"/../kubectl/delete-nodes.sh || \
     echo "WARN: unable to cleanly delete nodes"
 
-CMD="sudo -- kubeadm reset -f && \
-    sudo /sbin/iptables -F && sudo /sbin/iptables -t nat -F && \
-    sudo /sbin/iptables -t mangle -F && sudo /sbin/iptables -X"
+CMD1="sudo -- kubeadm reset -f"
+CMD2="sudo /sbin/iptables -F && \
+     sudo /sbin/iptables -t nat -F && \
+     sudo /sbin/iptables -t mangle -F && \
+     sudo /sbin/iptables -X && \
+     sudo /usr/sbin/ipvsadm --clear"
+parallel --nonall --slf "$PARALLEL_SSH_CFG" --tag "$CMD1"
+parallel --nonall --slf "$PARALLEL_SSH_CFG" --tag "$CMD2"
 
-parallel --nonall --slf "$PARALLEL_SSH_CFG" --tag "$CMD"
-
-ssh $SSH_CFG_OPT "$ORCHESTRATOR" "$CMD"
+ssh $SSH_CFG_OPT "$ORCHESTRATOR" "$CMD1"
+ssh $SSH_CFG_OPT "$ORCHESTRATOR" "$CMD2"
 
 # Remote path must be writable
 cp  "$DIR/weave-cleanup-node.sh" "/tmp"
