@@ -7,6 +7,10 @@
 set -e
 set -x
 
+#CNI_PLUGIN="calico"
+#CNI_PLUGIN="flannel"
+CNI_PLUGIN="weave"
+
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 . "$DIR/env-sysadmin.sh"
 
@@ -17,7 +21,6 @@ TOKEN=$(ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- kubeadm token generate")
 # Enable use of kubectl through ssh tunnel
 SSH_TUNNEL_OPT="--apiserver-cert-extra-sans=localhost"
 
-CNI_PLUGIN="calico"
 case "$CNI_PLUGIN" in
         calico)
             CNI_OPT="--pod-network-cidr=192.168.0.0/16"
