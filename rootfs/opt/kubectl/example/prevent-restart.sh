@@ -4,7 +4,7 @@ PODS_YAML="/tmp/pods.yaml"
 
 kubectl delete statefulsets.apps --selector=app=qserv --cascade=false
 
-kubectl get pods --selector=app=qserv -o yaml --export | sed "s/restartPolicy: Always/restartPolicy: Never/" > "$PODS_YAML" 
+kubectl get pods --selector=app=qserv -o yaml --export | sed "s/restartPolicy: Always/restartPolicy: Never/" > "$PODS_YAML"
 
 kubectl delete pods --selector=app=qserv
 
