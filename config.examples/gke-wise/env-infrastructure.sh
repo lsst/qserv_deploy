@@ -8,7 +8,7 @@ else
     >&2 echo "ERROR: no GKE nodes found"
 fi
 
-# Size of memory for czar pod(s)
+# Size of memory (RAM) for czar pod(s)
 MEM_REQUEST="400G"
 
 # Size of GKE volumes for all pods
