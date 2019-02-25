@@ -7,7 +7,7 @@
 
 set -e
 
-STABLE_VERSION="a44baeb" 
+STABLE_VERSION="6adbaa5" 
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
