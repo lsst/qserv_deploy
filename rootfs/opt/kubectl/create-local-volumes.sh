@@ -66,10 +66,7 @@ fi
 
 STORAGE_PATH="$1"
 
-STORAGE_OUTPUT_DIR="$QSERV_TMP_DIR"/storage
-
-mkdir -p $STORAGE_OUTPUT_DIR
-
+YAML_OUT_DIR=$(mktemp -d --tmpdir="/tmp/qserv-deploy" --suffix="-storage-yaml")
 
 kubectl apply -f "${DIR}/yaml/qserv-storageclass.yaml"
 
@@ -78,9 +75,7 @@ DATA_ID="czar-0"
 OPT_HOST="-H $MASTER"
 DATA_NAME="qserv-data"
 DATA_PATH="$STORAGE_PATH/data"
-"$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$STORAGE_OUTPUT_DIR"
-kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pv-${DATA_ID}.yaml"
-kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pvc-${DATA_ID}.yaml"
+"$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$YAML_OUT_DIR"
 
 echo "Creating persistent volumes and claims for Qserv pods"
 COUNT=0
@@ -88,9 +83,7 @@ for host in $WORKERS;
 do
     OPT_HOST="-H $host"
     DATA_ID="qserv-${COUNT}"
-    "$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$STORAGE_OUTPUT_DIR"
-    kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pv-${DATA_ID}.yaml"
-    kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pvc-${DATA_ID}.yaml"
+    "$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$YAML_OUT_DIR"
     COUNT=$((COUNT+1))
 done
 
@@ -99,6 +92,6 @@ OPT_HOST="-H $MASTER"
 DATA_NAME="repl-data"
 DATA_ID="repl-db-0"
 DATA_PATH="$STORAGE_PATH/repl-data"
-"$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$STORAGE_OUTPUT_DIR"
-kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pv-${DATA_ID}.yaml"
-kubectl apply -f "${STORAGE_OUTPUT_DIR}/${DATA_NAME}-pvc-${DATA_ID}.yaml"
+"$DIR"/storage-builder.py -p "$DATA_PATH" -n "$DATA_NAME" $OPT_HOST -d "$DATA_ID" -o "$YAML_OUT_DIR"
+
+kubectl apply -f "${YAML_OUT_DIR}"

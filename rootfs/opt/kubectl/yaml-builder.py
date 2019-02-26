@@ -56,6 +56,7 @@ import yaml
 # Support dumping of long strings as block literals or folded blocks in yaml
 #
 
+_LOG = logging.getLogger()
 
 def _str_presenter(dumper, data):
     if len(data.splitlines()) > 1:  # check for multiline string
@@ -82,8 +83,6 @@ def _config_logger(verbose):
 
     warnings.filterwarnings("ignore")
 
-    logger = logging.getLogger()
-
     # create console handler and set level to debug
     console = logging.StreamHandler()
     # create formatter
@@ -91,8 +90,8 @@ def _config_logger(verbose):
     # add formatter to ch
     console.setFormatter(formatter)
 
-    logger.handlers = [console]
-    logger.setLevel(levels.get(verbosity, logging.DEBUG))
+    _LOG.handlers = [console]
+    _LOG.setLevel(levels.get(verbosity, logging.DEBUG))
 
 
 def _get_container_id(container_name):
@@ -107,12 +106,15 @@ def _get_init_container_id(container_name):
             return i
     return None
 
-def _get_env_id(container_id, env_name):
-    for i, env in enumerate(yaml_data_tpl['containers'][container_id]['env']):
+def _set_env(container, env_name, env_value):
+    _set = False
+    for i, env in enumerate(container['env']):
         if env['name'] == env_name:
-            return i
-    return None
-
+            env['value'] = env_value
+            _set = True
+            break
+    if not _set:
+        _LOG.log(logging.WARNING, "Unable to set env variable %s", env_name)
 
 def _is_czar():
     name = yaml_data['metadata']['name']
@@ -194,14 +196,9 @@ if __name__ == "__main__":
 
         yaml_data_tpl = yaml_data['spec']['template']['spec']
 
-        # Configure replication controller
+        # Configure czar and worker
         #
-        if yaml_data['metadata']['name'] == 'repl-ctl':
-            container_id = _get_container_id('repl')
-            env_id = _get_env_id(container_id, 'WORKER_COUNT')
-            yaml_data_tpl['containers'][container_id]['env'][env_id]['value'] = config.get('spec', 'replicas')
-
-        elif yaml_data['metadata']['name'] in ['czar', 'qserv']:
+        if yaml_data['metadata']['name'] in ['czar', 'qserv']:
 
             if yaml_data['metadata']['name'] == 'qserv':
                 yaml_data['spec']['replicas'] = int(config.get('spec', 'replicas'))
@@ -232,52 +229,73 @@ if __name__ == "__main__":
             container_id = _get_container_id('xrootd')
             if container_id is not None:
                 container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'image')
+                container['image'] = config.get('spec', 'qserv_image')
 
             # Configure mysql-proxy
             #
             container_id = _get_container_id('proxy')
             if container_id is not None:
                 container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'image')
+                container['image'] = config.get('spec', 'qserv_image')
 
             # Configure wmgr
             #
             container_id = _get_container_id('wmgr')
             if container_id is not None:
                 container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'image')
+                container['image'] = config.get('spec', 'qserv_image')
 
             # Configure mariadb
             #
             container_id = _get_container_id('mariadb')
             if container_id is not None:
-                yaml_data_tpl['containers'][container_id]['image'] = config.get('spec', 'image')
+                container = yaml_data_tpl['containers'][container_id]
+                container['image'] = config.get('spec', 'qserv_image')
                 if _is_czar() and config.get('spec', 'mem_request'):
-                    yaml_data_tpl['containers'][container_id]['resources'] = dict()
-                    resources = yaml_data_tpl['containers'][container_id]['resources']
+                    container['resources'] = dict()
+                    resources = container['resources']
                     resources['requests'] = dict()
                     resources['requests']['memory'] = config.get('spec', 'mem_request')
 
-            # initContainer: configure qserv-data-dir using mariadb image
+            # Configure replication worker
+            #
+            container_id = _get_container_id('repl')
+            if container_id is not None:
+                container = yaml_data_tpl['containers'][container_id]
+                container['image'] = config.get('spec', 'repl_image')
+
+            # initContainer: configure qserv-data-dir using mariadb qserv_image
             #
             container_id = _get_init_container_id('init-data-dir')
             if container_id is not None:
-                yaml_data_tpl['initContainers'][container_id]['image'] = config.get('spec', 'image')
+                yaml_data_tpl['initContainers'][container_id]['image'] = config.get('spec', 'qserv_image')
 
             # Attach tmp-dir to containers
             #
             volume_name = 'tmp-volume'
             mount_path = '/qserv/run/tmp'
-            if config.get('spec', 'host_tmp_dir'):
-                _add_volume(config.get('spec', 'host_tmp_dir'), volume_name)
-            else:
-                _add_emptydir_volume(volume_name)
+            _add_emptydir_volume(volume_name)
 
             _mount_volume('mariadb', mount_path, volume_name)
             _mount_volume('proxy', mount_path, volume_name)
             _mount_volume('wmgr', mount_path, volume_name)
             _mount_volume('xrootd', mount_path, volume_name)
+
+        # Configure replication controller
+        #
+        elif yaml_data['metadata']['name'] == 'repl-ctl':
+            container_id = _get_container_id('repl')
+            container = yaml_data_tpl['containers'][container_id]
+            container['image'] = config.get('spec', 'repl_image')
+            _set_env(container, 'WORKER_COUNT', config.get('spec', 'replicas'))
+
+        # Configure replication database
+        #
+        elif yaml_data['metadata']['name'] == 'repl-db':
+            container_id = _get_container_id('mariadb')
+            container = yaml_data_tpl['containers'][container_id]
+            container['image'] = config.get('spec', 'mariadb_image')
+
         else:
             raise ValueError('Unsupported template file: {}'.format(args.templateFile))
 

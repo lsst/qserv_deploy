@@ -1,13 +1,41 @@
 #!/bin/bash
 
-# Stop Qserv pods and wait for them to be removed
+# Deleted all Qserv objects and wait for completion
 
 # @author Fabrice Jammes SLAC/IN2P3
 
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
+usage() {
+  cat << EOD
 
-echo "Delete Qserv statefulset on Kubernetes cluster"
+  Usage: $(basename "$0") [options]
 
-$QSERV_INSTALL_DIR/kubectl/stop.sh
+  Available options:
+    -h          this message
+
+  Remove Qserv objects from Kubernetes cluster
+  and wait for completion
+
+EOD
+}
+
+# get the options
+while getopts h c ; do
+    case $c in
+        h) usage ; exit 0 ;;
+        \?) usage ; exit 2 ;;
+    esac
+done
+shift "$((OPTIND-1))"
+
+if [ $# -ne 0 ] ; then
+    usage
+    exit 2
+fi
+
+echo "Delete all Qserv objects on Kubernetes cluster"
+
+kubectl delete all -l app=qserv --now
+kubectl delete configmap,secret -l app=qserv
+/opt/kubectl/wait-pods-terminate.sh

@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 echo "Restart $SERVICE service on node"
 parallel --nonall --tag --slf "$PARALLEL_SSH_CFG" \

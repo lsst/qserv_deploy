@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 LOG_DIR="/qserv/log_DM-10040_nosvc"
 echo "Create log dir $LOG_DIR on all nodes"

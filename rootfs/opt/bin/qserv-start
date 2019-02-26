@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copy orchestration script to kubernetes master
+# Create eventually local volumes
 # Start Qserv pods
 # Wait for Qserv startup
 
@@ -8,8 +8,12 @@
 
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
+. "$QSERV_CFG_DIR/env-infra.sh"
 
-"$QSERV_INSTALL_DIR"/kubectl/create-local-volumes.sh "/qserv/desc"
-"$QSERV_INSTALL_DIR"/kubectl/start.sh
-"$QSERV_INSTALL_DIR"/kubectl/wait-statefulset-ready.sh
+if [ "$LOCAL_VOLUMES_PATH" ];
+then
+    /opt/kubectl/create-local-volumes.sh "$LOCAL_VOLUMES_PATH"
+fi
+
+/opt/kubectl/start.sh
+/opt/kubectl/wait-statefulset-ready.sh

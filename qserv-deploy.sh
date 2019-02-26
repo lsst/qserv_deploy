@@ -84,8 +84,12 @@ then
     SSH_DIR="$HOME/.ssh"
 fi
 
+TMP_DIR="$QSERV_CFG_DIR/tmp"
+
 MOUNTS="-v $QSERV_CFG_DIR/etc:/etc/qserv-deploy "
-MOUNTS="$MOUNTS -v $QSERV_CFG_DIR/tmp:/tmp/qserv-deploy "
+
+mkdir -p $TMP_DIR
+MOUNTS="$MOUNTS -v $TMP_DIR:/tmp/qserv-deploy "
 
 CONTAINER_HOME="/home/$USER"
 
@@ -93,9 +97,7 @@ mkdir -p $GCLOUD_DIR
 MOUNTS="$MOUNTS -v $GCLOUD_DIR:$CONTAINER_HOME/.config"
 MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
 
-# TODO create group and password file to enable NFS4 support
 MOUNTS="$MOUNTS -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
-
 
 DOT_KUBE_DIR="$QSERV_CFG_DIR/dot-kube"
 mkdir -p "$DOT_KUBE_DIR"

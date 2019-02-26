@@ -31,12 +31,11 @@ DIR=$(cd "$(dirname "$0")"; pwd -P)
 . "$QSERV_CFG_DIR/env.sh"
 
 # Build CSS input data
-i=0
-for node in $WORKERS;
+upper_id=$((WORKER_COUNT-1))
+for i in $(seq 0 "$upper_id");
 do
     CSS_INFO="${CSS_INFO}CREATE NODE worker${i} type=worker port=5012 \
     host=qserv-${i}.qserv; "
-    i=$((i+1))
 done
 
 kubectl exec czar-0 -c proxy -- su qserv -l -c ". /qserv/stack/loadLSST.bash && \

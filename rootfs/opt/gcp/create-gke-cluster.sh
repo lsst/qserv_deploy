@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -e
-set -x
 
 . "$QSERV_CFG_DIR/env-infra.sh"
 

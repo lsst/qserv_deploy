@@ -9,7 +9,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 REMOTE_DIR="/qserv/desc/log"
 echo "Create directory $REMOTE_DIR on all nodes"

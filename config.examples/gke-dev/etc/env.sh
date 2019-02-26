@@ -1,26 +1,26 @@
 # Description: allow to customize pods execution
-#
-# Configuration file copied to orchestration node, in $ORCHESTRATION_DIR
-# and then sourced by Kubernetes ochestration node scripts
 
-# VERSION is relative to Qserv repository, it can be:
+
+# Container settings
+# =====================
+
+MARIADB_VERSION=10.2.16
+
+# VERSION is relative to Qservi/Repl repository, it can be:
 #  - a git ticket branch but with _ instead of /
 #    example: tickets_DM-7139, or dev
 #  - a git hash
-VERSION=d7fc83f
+QSERV_VERSION=d7fc83f
+REPL_VERSION=tools-w.2018.16-556-g62efc42-dirty
 
-# `docker run` settings
-# =====================
+# Mariadb container image name
+MARIADB_IMAGE="mariadb:${MARIADB_VERSION}"
 
-# WARN MINIKUBE must have 3 variables below commented
-# if not all Qserv pods will use same data directories
-# and Qserv may crash
+# Qserv container image name
+QSERV_IMAGE="qserv/qserv:${QSERV_VERSION}"
 
-# Data directory location on docker host
-HOST_DATA_DIR=/qserv/data
-
-# Qserv temporary directory location on docker host
-# HOST_TMP_DIR=/qserv/tmp
+# Replication system container image name
+REPL_IMAGE="qserv/replica:${REPL_VERSION}"
 
 # Advanced configuration
 # ======================
@@ -28,9 +28,8 @@ HOST_DATA_DIR=/qserv/data
 # QSERV_CFG_DIR is a global variable
 
 # FIXME: infrastructure should be abstracted from k8s
-# Parameters related to infrastructure,used to place containers:
+# Parameters related to infrastructure, used to place containers:
 # - node hostnames
 . "$QSERV_CFG_DIR/env-infra.sh"
 
-# Container image name
-CONTAINER_IMAGE="qserv/qserv:${VERSION}"
+WORKER_COUNT=${SIZE_WORKER:-$(echo $WORKERS | wc -w)}

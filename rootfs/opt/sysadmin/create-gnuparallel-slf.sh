@@ -10,7 +10,7 @@ set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 export CREATE_PARALLEL_SSH_CFG=true
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 if [ ! -e "$SSH_CFG" ]
 then
