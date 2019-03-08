@@ -7,11 +7,7 @@
 
 set -e
 
-<<<<<<< HEAD
-STABLE_VERSION="6adbaa5" 
-=======
-STABLE_VERSION="1cfbb62"
->>>>>>> 35f7467... Improve configuration examples
+STABLE_VERSION="f7a7c00" 
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
