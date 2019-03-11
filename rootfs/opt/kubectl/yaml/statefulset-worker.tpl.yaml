@@ -143,6 +143,11 @@ spec:
                 configMapKeyRef:
                   name: config-domainnames
                   key: CZAR
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-mariadb
+                  key: MYSQL_ROOT_PASSWORD
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           name: init-data-dir

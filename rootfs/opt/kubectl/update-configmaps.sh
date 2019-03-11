@@ -102,8 +102,3 @@ do
     $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start | \
         $KUBECTL_LABEL > $outdir/config-${service}-start.yaml
 done
-
-echo "Create kubernetes secrets for Qserv"
-$KUBECTL_SECRET secret-wmgr \
-        --from-file="$CONFIGMAP_DIR/wmgr/wmgr.secret" | \
-        $KUBECTL_LABEL > $outdir/secret-wmgr.yaml
