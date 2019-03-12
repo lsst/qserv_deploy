@@ -1,9 +1,8 @@
 #!/bin/sh
 
 set -e
-set -x
 
-. "$QSERV_CFG_DIR/env-gke.sh"
+. "$QSERV_CFG_DIR/env-infra.sh"
 
 # Creates a GKE cluster
 #gcloud auth login

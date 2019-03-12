@@ -25,7 +25,7 @@
 # @author  Fabrice Jammes, IN2P3/SLAC
 
 set -e
-set -x
+# set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -39,12 +39,13 @@ CZAR_DN="${CZAR}.${QSERV_DOMAIN}"
 usage() {
   cat << EOD
 
-  Usage: $(basename "$0") [options]
+  Usage: $(basename "$0") [options] <output_directory>
 
   Available options:
     -h          this message
 
-  Update Qserv configmaps 
+  Produce yaml files for Qserv configmaps in <output_directory>.
+  Output directory must exist and be writable.
 
 EOD
 }
@@ -58,48 +59,52 @@ while getopts h c ; do
 done
 shift "$((OPTIND-1))"
 
-if [ $# -ne 0 ] ; then
+if [ $# -ne 1 ] ; then
     usage
     exit 2
 fi
 
-echo "Create kubernetes configmaps for Qserv"
+outdir=$1
 
-kubectl delete configmap --ignore-not-found=true config-domainnames
-kubectl create configmap config-domainnames --from-literal=CZAR="$CZAR" \
+# strip trailing slash
+outdir=$(echo $outdir | sed 's%\(.*[^/]\)/*%\1%')
+
+
+echo "Create or update kubernetes configmaps for Qserv"
+
+KUBECTL_CM="kubectl create configmap -o yaml --dry-run"
+KUBECTL_SECRET="kubectl create secret generic -o yaml --dry-run"
+KUBECTL_LABEL="kubectl label --local -f - app=qserv -o yaml"
+
+$KUBECTL_CM config-domainnames --from-literal=CZAR="$CZAR" \
     --from-literal=CZAR_DN="$CZAR_DN" \
     --from-literal=QSERV_DOMAIN="$QSERV_DOMAIN" \
     --from-literal=REPL_CTL="$REPL_CTL" \
-    --from-literal=REPL_DB="$REPL_DB"
+    --from-literal=REPL_DB="$REPL_DB" | $KUBECTL_LABEL > $outdir/config-domainnames.yaml
 
-kubectl delete configmap --ignore-not-found=true config-dot-lsst
-kubectl create configmap --from-file="$CONFIGMAP_DIR/dot-lsst" config-dot-lsst
+$KUBECTL_CM --from-file="$CONFIGMAP_DIR/dot-lsst" config-dot-lsst | $KUBECTL_LABEL > $outdir/config-dot-lsst.yaml
 
-kubectl delete configmap --ignore-not-found=true config-mariadb-configure
-kubectl create configmap --from-file="$CONFIGMAP_DIR/init/mariadb-configure.sh" config-mariadb-configure
+$KUBECTL_CM --from-file="$CONFIGMAP_DIR/init/mariadb-configure.sh" config-mariadb-configure | \
+    $KUBECTL_LABEL > $outdir/config-mariadb-configure.yaml
 
-kubectl delete configmap --ignore-not-found=true config-sql-czar
-kubectl create configmap --from-file="$CONFIGMAP_DIR/init/sql/czar" config-sql-czar
-
-kubectl delete configmap --ignore-not-found=true config-sql-repl
-kubectl create configmap --from-file="$CONFIGMAP_DIR/init/sql/repl" config-sql-repl
-
-kubectl delete configmap --ignore-not-found=true config-sql-worker
-kubectl create configmap --from-file="$CONFIGMAP_DIR/init/sql/worker" config-sql-worker
+DATABASES="czar repl worker"
+for db in $DATABASES
+do
+    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/init/sql/$db" "config-sql-$db" | \
+        $KUBECTL_LABEL > $outdir/config-sql-$db.yaml
+done
 
 SERVICES="mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
-
 for service in $SERVICES
 do
-    kubectl delete configmap --ignore-not-found=true config-${service}-etc
-    kubectl create configmap --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc
-
-    kubectl delete configmap --ignore-not-found=true config-${service}-start
-    kubectl create configmap --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start
+    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
+        $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
+    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start | \
+        $KUBECTL_LABEL > $outdir/config-${service}-start.yaml
 done
 
 echo "Create kubernetes secrets for Qserv"
-kubectl delete secret --ignore-not-found=true secret-wmgr
-kubectl create secret generic secret-wmgr \
-        --from-file="$CONFIGMAP_DIR/wmgr/wmgr.secret"
+$KUBECTL_SECRET secret-wmgr \
+        --from-file="$CONFIGMAP_DIR/wmgr/wmgr.secret" | \
+        $KUBECTL_LABEL > $outdir/secret-wmgr.yaml
 

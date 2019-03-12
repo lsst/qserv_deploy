@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # LSST Data Management System
 # Copyright 2014 LSST Corporation.
@@ -25,7 +25,6 @@
 # @author  Fabrice Jammes, IN2P3/SLAC
 
 set -e
-set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
@@ -35,12 +34,7 @@ CFG_DIR="${DIR}/yaml"
 RESOURCE_DIR="${DIR}/resource"
 CONFIGMAP_DIR="${DIR}/configmap"
 
-mkdir -p "${QSERV_CFG_DIR}/tmp"
-TMP_DIR=$(mktemp -d --tmpdir="${QSERV_CFG_DIR}/tmp" --suffix=-qserv-deploy-yaml)
-
-# For in2p3 cluster: k8s schema cache must not be on AFS
-CACHE_DIR=$(mktemp -d --tmpdir="${QSERV_CFG_DIR}/tmp" --suffix=-kube-$USER)
-CACHE_OPT="--cache-dir=$CACHE_DIR/schema"
+YAML_OUT_DIR=$(mktemp -d --tmpdir="/tmp/qserv-deploy" --suffix="-qserv-yaml")
 
 usage() {
   cat << EOD
@@ -69,26 +63,22 @@ if [ $# -ne 0 ] ; then
     exit 2
 fi
 
-INI_FILE="${TMP_DIR}/statefulset.ini"
+INI_FILE="${YAML_OUT_DIR}/statefulset.ini"
 
-"$DIR"/update-configmaps.sh
+"$DIR"/update-configmaps.sh "$YAML_OUT_DIR"
 
-echo "Create headless service for Qserv"
-kubectl apply $CACHE_OPT -f ${CFG_DIR}/qserv-headless-service.yaml
+echo "Create headless and nodeport services for Qserv"
+cp ${CFG_DIR}/qserv-headless-service.yaml "$YAML_OUT_DIR"
+cp ${CFG_DIR}/qserv-nodeport-service.yaml "$YAML_OUT_DIR"
 
-echo "Create nodeport service for Qserv"
-kubectl apply $CACHE_OPT -f ${CFG_DIR}/qserv-nodeport-service.yaml
+echo "Create statefulsets for Qserv"
 
-echo "Create kubernetes pod for Qserv statefulset"
-
-WORKERS_COUNT=$(echo $WORKERS | wc -w)
-
+# Convert to python by setting first letter to uppercase letter
 if [ $MINIKUBE ]; then
     INI_MINIKUBE="True"
 else
     INI_MINIKUBE="False"
 fi
-
 if [ $GKE ]; then
     INI_GKE="True"
 else
@@ -99,22 +89,19 @@ cat << EOF > "$INI_FILE"
 [spec]
 gke: $INI_GKE
 storage_size: $STORAGE_SIZE
+mariadb_image: $MARIADB_IMAGE
 mem_request: $MEM_REQUEST
-host_data_dir: $HOST_DATA_DIR
-host_tmp_dir: $HOST_TMP_DIR
-image: $CONTAINER_IMAGE
+qserv_image: $QSERV_IMAGE
 minikube: $INI_MINIKUBE
-replicas: $WORKERS_COUNT
+replicas: $WORKER_COUNT
+repl_image: $REPL_IMAGE
 EOF
 
-kubectl apply $CACHE_OPT -f "${CFG_DIR}/statefulset-repl-db.yaml"
-for service in "czar" "worker" "repl-ctl"
+for service in "czar" "worker" "repl-ctl" "repl-db"
 do
     YAML_TPL="${CFG_DIR}/statefulset-${service}.tpl.yaml"
-    YAML_FILE="${TMP_DIR}/statefulset-${service}.yaml"
+    YAML_FILE="${YAML_OUT_DIR}/statefulset-${service}.yaml"
     "$DIR"/yaml-builder.py -i "$INI_FILE" -r "$RESOURCE_DIR" -t "$YAML_TPL" -o "$YAML_FILE"
-    kubectl apply $CACHE_OPT -f "$YAML_FILE"
 done
 
-# TODO study deployment instead of stateful set for repl-ctl
-# kubectl apply $CACHE_OPT -f "${CFG_DIR}/repl-ctl-service.yaml"
+kubectl apply -f "${YAML_OUT_DIR}"

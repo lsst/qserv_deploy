@@ -18,4 +18,4 @@ echo
 echo "Check that Qserv services are running on all these pods"
 echo "======================================================="
 echo
-$QSERV_INSTALL_DIR/kubectl/status.sh
+/opt/kubectl/status.sh

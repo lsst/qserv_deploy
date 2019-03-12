@@ -7,7 +7,7 @@
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../../env-cluster.sh"
+. "$DIR/../env-sysadmin.sh"
 
 FULL_SSH_CFG="${PARALLEL_SSH_CFG}.full"
 

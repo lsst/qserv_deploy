@@ -14,11 +14,11 @@ mkdir -p $QSERV_CFG_DIR
 cp -r $QSERV_DEPLOY/config.examples/ccin2p3/* $QSERV_CFG_DIR 
 ```
 
-Set nodes names in `/qserv/kubernetes/upper/env-infrastructure.sh`
+Set nodes names in `/qserv/kubernetes/upper/env-infra.sh`
 
 Create gnu-parallel configuration file:
 ```shell
-$QSERV_DEPLOY/rootfs/opt/qserv/k8s/sysadmin/create-gnuparallel-slf.sh
+$QSERV_DEPLOY/rootfs/opt/sysadmin/create-gnuparallel-slf.sh
 ```
 
 # Setup Kubernetes
@@ -31,8 +31,8 @@ not inside the qserv-deploy container.
 . $QSERV_CFG_DIR/env_nocontainer.sh
 
 # Create cluster
-$QSERV_DEPLOY/rootfs/opt/qserv/k8s/sysadmin/kube-create.sh
+$QSERV_DEPLOY/rootfs/opt/sysadmin/kube-create.sh
 
 # Destroy cluster
-$QSERV_DEPLOY/rootfs/opt/qserv/k8s/sysadmin/kube-destroy.sh
+$QSERV_DEPLOY/rootfs/opt/sysadmin/kube-destroy.sh
 ```

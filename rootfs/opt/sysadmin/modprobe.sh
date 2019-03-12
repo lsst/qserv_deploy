@@ -7,7 +7,7 @@
 set -e
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 for node in $MASTER $WORKERS $ORCHESTRATOR
 do

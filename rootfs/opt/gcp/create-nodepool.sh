@@ -7,7 +7,7 @@
 set -e
 set -x
 
-. "$QSERV_CFG_DIR/env-gke.sh"
+. "$QSERV_CFG_DIR/env-infra.sh"
 
 usage() {
   cat << EOD
@@ -41,7 +41,7 @@ MTYPE=$2
 SIZE=$3
 
 gcloud beta container --project "$PROJECT" node-pools create "$POOL_NAME" \
-    --cluster "$CLUSTER" --zone "$ZONE" --node-version "1.9.7-gke.6" \
+    --cluster "$CLUSTER" --zone "$ZONE" --node-version "$CLUSTER_VERSION" \
     --machine-type "$MTYPE" --image-type "COS" \
     --disk-type "pd-standard" --disk-size "100" \
     --scopes $SCOPE  \

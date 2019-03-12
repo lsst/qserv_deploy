@@ -3,7 +3,7 @@
 ```shell
 
 # Edit file to set up cluster attribute
-vi /etc/qserv_deploy/env-gke.sh
+vi /etc/qserv-deploy/env-infra.sh
 
 # Create GKE cluster
 ./create-gke-cluster.sh

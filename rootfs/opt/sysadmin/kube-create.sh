@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 echo "Create Kubernetes cluster"
 ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- systemctl start kubelet"

@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 "$DIR"/../kubectl/delete-nodes.sh || \
     echo "WARN: unable to cleanly delete nodes"

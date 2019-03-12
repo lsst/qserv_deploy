@@ -8,7 +8,7 @@ set -e
 set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
-. "$DIR/../env-cluster.sh"
+. "$DIR/env-sysadmin.sh"
 
 usage() {
     cat << EOD
