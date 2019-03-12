@@ -6,6 +6,7 @@ set -e
 
 # Creates a GKE cluster
 gcloud config set project "$PROJECT"
+<<<<<<< HEAD
 gcloud beta container --project "$PROJECT" clusters create "$CLUSTER" --zone "$ZONE" \
     --no-enable-basic-auth --cluster-version "1.12.5-gke.5" --machine-type "$MTYPE_WORKER" \
     --image-type "COS" --disk-type "pd-standard" --disk-size "100" \

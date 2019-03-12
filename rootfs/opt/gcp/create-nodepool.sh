@@ -41,7 +41,7 @@ MTYPE=$2
 SIZE=$3
 
 gcloud beta container --project "$PROJECT" node-pools create "$POOL_NAME" \
-    --cluster "$CLUSTER" --zone "$ZONE" --node-version "$CLUSTER_VERSION" \
+    --cluster "$CLUSTER" --zone "$ZONE" --node-version "$GKE_CLUSTER_VERSION" \
     --machine-type "$MTYPE" --image-type "COS" \
     --disk-type "pd-standard" --disk-size "100" \
     $PREEMPTIBLE_OPT \

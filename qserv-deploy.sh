@@ -7,8 +7,6 @@
 
 set -e
 
-STABLE_VERSION="f7a7c00" 
-
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
 usage() {
@@ -57,7 +55,8 @@ elif [ $# -eq 1 ]; then
     CMD=$1
 fi
 
-VERSION=${DEPLOY_VERSION:-$STABLE_VERSION}
+# Get qserv_deploy image name
+. "$QSERV_CFG_DIR/etc/env.sh"
 
 if [ -z "$QSERV_CFG_DIR" ]; then
     >&2 echo "ERROR: Unset QSERV_CFG_DIR parameter \
@@ -119,4 +118,4 @@ docker run -it --net=host --rm -l config-path=$QSERV_CFG_DIR \
     --user=$(id -u):$(id -g $USER) \
     $MOUNTS \
     -w $CONTAINER_HOME \
-    qserv/deploy:$VERSION $CMD
+    "$QSERV_DEPLOY_VERSION" $CMD
