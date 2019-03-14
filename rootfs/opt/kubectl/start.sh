@@ -64,8 +64,6 @@ if [ $# -ne 0 ] ; then
     exit 2
 fi
 
-INI_FILE="${OUTDIR}/statefulset.ini"
-
 "$DIR"/update-configmaps.sh "$OUTDIR"
 
 echo "Create headless and nodeport services for Qserv"
@@ -86,6 +84,12 @@ else
     INI_GKE="False"
 fi
 
+<<<<<<< HEAD
+INI_FILE="${OUTDIR}/statefulset.ini"
+WORKER_COUNT=${SIZE_WORKER:-$(echo $WORKERS | wc -w)}
+=======
+INI_FILE="${YAML_OUT_DIR}/statefulset.ini"
+>>>>>>> 764a10c... Fix worker count
 cat << EOF > "$INI_FILE"
 [spec]
 gke: $INI_GKE

@@ -14,7 +14,7 @@ REPL_VERSION="tools-w.2018.16-556-g62efc42-dirty"
 MARIADB_IMAGE="mariadb:${MARIADB_VERSION}"
 
 # Qserv deploy container image name
-QSERV_DEPLOY_IMAGE="qserv/deploy:${QSERV_DEPLOY_IMAGE}"
+QSERV_DEPLOY_IMAGE="qserv/deploy:${QSERV_DEPLOY_VERSION}"
 
 # Qserv container image name
 QSERV_IMAGE="qserv/qserv:${QSERV_VERSION}"
@@ -22,12 +22,6 @@ QSERV_IMAGE="qserv/qserv:${QSERV_VERSION}"
 # Replication system container image name
 REPL_IMAGE="qserv/replica:${REPL_VERSION}"
 
-# Advanced configuration
-# ======================
-
-# QSERV_CFG_DIR is a global variable
-
-# Parameters related to infrastructure, used to compute worker number 
-. "$QSERV_CFG_DIR/env-infra.sh"
-
+# Number of Qserv workers, depends on infrastructure
 WORKER_COUNT=${SIZE_WORKER:-$(echo $WORKERS | wc -w)}
+

@@ -19,4 +19,3 @@ ORCHESTRATOR="${HOSTNAME_TPL}km2"
 
 # Host path for local volumes
 LOCAL_VOLUMES_PATH="/qserv/desc"
-
