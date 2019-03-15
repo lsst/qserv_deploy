@@ -85,6 +85,10 @@ then
     fi
     for file_name in "${SQL_DIR}/${INSTANCE_NAME}"/*; do
         echo "-- Loading ${file_name} in MySQL"
+        basename=$(basename "$file_name")
+        if [ $basename == 'privileges.tpl.sql']; then
+            sed -i "s/<MYSQL_MONITOR_PASSWORD>/${MYSQL_MONITOR_PASSWORD}/g" "$file_name"
+        fi
         if mysql -vvv --user="root" --password="${MYSQL_ROOT_PASSWORD}" \
             < "${file_name}"
         then
