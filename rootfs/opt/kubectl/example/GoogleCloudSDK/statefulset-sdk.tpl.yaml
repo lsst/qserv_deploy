@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qserv
+  labels:
+    tier: google-cloud-sdk
+    app: qserv
+spec:
+  serviceName: qserv
+  podManagementPolicy: "Parallel"
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: sdk
+      app: qserv
+  template:
+    metadata:
+      labels:
+        tier: sdk
+        app: qserv
+    spec:
+      containers:
+        - name: sdk
+          image: "google/cloud-sdk:238.0.0"
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - 'tail -f /dev/null'
+          volumeMounts:
+          - name: qserv-data
+            mountPath: /qserv/data
+          - name: secret-backup
+            mountPath: /secret-backup
+      #     volumeMounts:
+      #     - name: config-dot-lsst
+      #       mountPath: /config-etc
+      volumes:
+        - name: secret-backup
+          secret:
+            secretName: secret-backup
+      #   - name: config-dot-lsst
+      #     configMap:
+      #       name: config-dot-lsst
+  volumeClaimTemplates:
+  - metadata:
+      name: qserv-data
+    spec:
+      accessModes: [ "ReadOnlyMany" ]

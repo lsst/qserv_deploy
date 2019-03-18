@@ -108,3 +108,6 @@ $KUBECTL_SECRET secret-wmgr \
         --from-file="$CONFIGMAP_DIR/wmgr/wmgr.secret" | \
         $KUBECTL_LABEL > $outdir/secret-wmgr.yaml
 
+$KUBECTL_SECRET secret-backup \
+        --from-file="/tmp/qserv-deploy/secret/neural-theory-215601-53bf50004612.json" | \
+        $KUBECTL_LABEL > $outdir/secret-backup.yaml
