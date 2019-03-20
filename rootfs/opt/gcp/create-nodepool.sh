@@ -44,5 +44,6 @@ gcloud beta container --project "$PROJECT" node-pools create "$POOL_NAME" \
     --cluster "$CLUSTER" --zone "$ZONE" --node-version "$CLUSTER_VERSION" \
     --machine-type "$MTYPE" --image-type "COS" \
     --disk-type "pd-standard" --disk-size "100" \
-    --scopes $SCOPE  \
+    $PREEMPTIBLE_OPT \
+    --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" \
     --num-nodes "$SIZE" --no-enable-autoupgrade --enable-autorepair

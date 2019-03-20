@@ -39,4 +39,4 @@ if [ $# -ne 0 ] ; then
 fi
 
 "$DIR/resize-nodepool.sh" "pool-czar" "$SIZE_CZAR" 
-"$DIR/resize-nodepool.sh" "pool-worker" "$SIZE_WORKER"
+"$DIR/resize-nodepool.sh" "default-pool" "$SIZE_WORKER"

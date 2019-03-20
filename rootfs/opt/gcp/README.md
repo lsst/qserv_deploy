@@ -10,4 +10,7 @@ vi /etc/qserv-deploy/env-infra.sh
 
 # Create node pool for czar and worker
 ./setup-nodepools.sh
+
+# Retrieve kubeconfig
+/opt/gcp/get_kubeconfig.sh
 ```
