@@ -25,12 +25,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: config-domainnames
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secret-mariadb
-                  key: MYSQL_ROOT_PASSWORD
           image: mariadb:10.2.16 
           imagePullPolicy: Always
           name: init-data-dir
@@ -43,6 +37,8 @@ spec:
             name: config-sql-repl
           - mountPath: /qserv/data
             name: repl-data
+          - mountPath: /secret-mariadb
+            name: secret-mariadb
       containers:
       - name: mariadb
         image: mariadb:10.2.16
@@ -93,6 +89,9 @@ spec:
         - name: config-repl-db-etc
           configMap:
             name: config-repl-db-etc
+        - name: secret-mariadb
+          secret:
+            secretName: secret-mariadb
   volumeClaimTemplates:
   - metadata:
       name: repl-data

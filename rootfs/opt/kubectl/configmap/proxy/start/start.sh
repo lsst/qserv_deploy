@@ -13,30 +13,11 @@
 
 set -e
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
-
-# Sleep if we are in a worker pod
-if hostname | grep -q 'worker'; then
-    while true; do
-        sleep 3600;
-    done
-fi
-
-# Source functions library.
-. /qserv/run/etc/init.d/qserv-functions
-
 # Source pathes to eups packages
 . /qserv/run/etc/sysconfig/qserv
 
-NAME="mysql-proxy"
-
 # Run proxy using unix account below
 PROXY_USER=qserv
-
-# Check variables which are not controlled by application
-check_writable ${NAME} "QSERV_RUN_DIR"
-check_readable ${NAME} "LUA_DIR"
-check_readable ${NAME} "QSERV_DIR"
 
 # Create directory for empty chunk files
 # TODO: this should be handled by czar in order to have
@@ -85,6 +66,6 @@ if [ "$USER" = "root" ]; then
     proxy_user_option="--user=$proxy_user"
 fi
 
-QSERV_CONFIG=${QSERV_CONFIG} ${VALG} ${NAME} \
+QSERV_CONFIG=${QSERV_CONFIG} ${VALG} mysql-proxy \
     $PROXY_OPTIONS $proxy_user_option \
     --defaults-file=${MYPROXY_CONF}

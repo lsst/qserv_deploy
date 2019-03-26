@@ -37,10 +37,15 @@ fi
 DATA_DIR="/qserv/data"
 MYSQLD_DATA_DIR="$DATA_DIR/mysql"
 MYSQLD_SOCKET="$MYSQLD_DATA_DIR/mysql.sock"
+
+
+# Load mariadb secrets
+. /secret-mariadb/mariadb.secret.sh
 if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
     echo "ERROR : mariadb root password is missing, exiting"
     exit 2
 fi
+
 SQL_DIR="/config-sql"
 
 EXCLUDE_DIR1="lost+found"

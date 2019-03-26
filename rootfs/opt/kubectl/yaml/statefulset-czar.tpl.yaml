@@ -106,16 +106,12 @@ spec:
           - name: proxy
             containerPort: 4040
           volumeMounts:
-          - mountPath: /home/qserv/.lsst
-            name: config-dot-lsst
           - mountPath: /config-start
             name: config-proxy-start
           - mountPath: /config-etc
             name: config-proxy-etc
           - mountPath: /qserv/data
             name: qserv-data
-          - mountPath: /secret
-            name: secret-wmgr
         - name: wmgr
           command:
             - sh
@@ -139,14 +135,18 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           volumeMounts:
+          - mountPath: /config-dot-lsst
+            name: config-dot-lsst
           - mountPath: /config-start
             name: config-wmgr-start
           - mountPath: /config-etc
             name: config-wmgr-etc
           - mountPath: /qserv/data
             name: qserv-data
-          - mountPath: /secret
+          - mountPath: /secret-wmgr
             name: secret-wmgr
+          - mountPath: /secret-mariadb
+            name: secret-mariadb
       initContainers:
         - command:
           - sh
@@ -157,11 +157,6 @@ spec:
                 configMapKeyRef:
                   name: config-domainnames
                   key: CZAR
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: secret-mariadb
-                  key: MYSQL_ROOT_PASSWORD
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           name: init-data-dir
@@ -174,6 +169,8 @@ spec:
             name: config-sql-czar
           - mountPath: /qserv/data
             name: qserv-data
+          - mountPath: /secret-mariadb
+            name: secret-mariadb
       volumes:
         - name: config-dot-lsst
           configMap:
@@ -212,6 +209,9 @@ spec:
         - name: config-wmgr-start
           configMap:
             name: config-wmgr-start
+        - name: secret-mariadb
+          secret:
+            secretName: secret-mariadb
         - name: secret-wmgr
           secret:
             secretName: secret-wmgr

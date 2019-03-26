@@ -2,33 +2,15 @@
 #
 # qserv-wmgr   This script starts Qserv worker management service.
 #
-# description: start and stop qserv worker management service
-
-# Description: qserv-wmgr is the Qserv worker management service \
-#              It provides RESTful HTTP interface which is a single \
-#              end-point for all worker communication and control.
+# description: Start and stop qserv worker management service.
+#
+# In fact, this script is a only wrapper for real wmgr startup script.
+# This allows users to open a shell as root inside the container whereas
+# wmgr run using 'qserv' account.
 
 set -e
 set -x
 
-DIR=$(cd "$(dirname "$0")"; pwd -P)
-
-CONFIG="/etc/wmgr.cnf"
-cp "/config-etc/wmgr.cnf" "$CONFIG"
-sed -i "s/<ENV_CZAR_DN>/${CZAR_DN}/" "$CONFIG"
-
-su qserv -c "
-# Source functions library.
-. /qserv/run/etc/init.d/qserv-functions
-
-# Source pathes to eups packages
-. /qserv/run/etc/sysconfig/qserv
-
-# Check variables which are not controlled by application
-NAME="qserv-wmgr"
-check_writable \${NAME} "QSERV_RUN_DIR"
-
-# Disabling buffering in python in order to enable "real-time" logging.
-export PYTHONUNBUFFERED=1
-
-\${PYTHON} qservWmgr.py -c ${CONFIG} -v"
+# Launch service
+#
+su qserv -c "sh /config-start/wmgr.sh"
