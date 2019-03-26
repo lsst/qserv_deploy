@@ -24,3 +24,9 @@ REPL_IMAGE="qserv/replica:${REPL_VERSION}"
 
 # Number of Qserv workers, depends on infrastructure
 WORKER_COUNT=${SIZE_WORKER:-$(echo $WORKERS | wc -w)}
+
+if [ -z "$WORKER_COUNT" ]
+then
+    echo "ERROR: undefined \$WORKER_COUNT"
+    exit 2
+fi
