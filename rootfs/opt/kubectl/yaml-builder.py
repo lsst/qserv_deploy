@@ -168,10 +168,6 @@ if __name__ == "__main__":
         parser.add_argument('-i', '--ini', dest='iniFile',
                             required=True, metavar='PATH',
                             help='ini file used to fill yaml template')
-        parser.add_argument('-r', '--resource', dest='resourcePath',
-                            required=True, metavar='PATH',
-                            help='path to resource directory (i.e. shell '
-                            'scripts) inserted inside yaml')
         parser.add_argument('-t', '--template', dest='templateFile',
                             required=True, metavar='PATH',
                             help='yaml template file')
@@ -191,7 +187,6 @@ if __name__ == "__main__":
         with open(args.templateFile, 'r') as f:
             yaml_data = yaml.load(f)
 
-        resourcePath = args.resourcePath
         yaml.add_representer(str, _str_presenter)
 
         yaml_data_tpl = yaml_data['spec']['template']['spec']

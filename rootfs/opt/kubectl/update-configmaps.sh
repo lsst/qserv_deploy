@@ -107,4 +107,3 @@ echo "Create kubernetes secrets for Qserv"
 $KUBECTL_SECRET secret-wmgr \
         --from-file="$CONFIGMAP_DIR/wmgr/wmgr.secret" | \
         $KUBECTL_LABEL > $outdir/secret-wmgr.yaml
-

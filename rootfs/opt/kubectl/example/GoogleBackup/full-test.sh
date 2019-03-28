@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # LSST Data Management System
 # Copyright 2014 LSST Corporation.
@@ -19,9 +19,13 @@
 # You should have received a copy of the LSST License Statement and 
 # the GNU General Public License along with this program.  If not, 
 # see <http://www.lsstcorp.org/LegalNotices/>.
-# Launch Qserv multinode tests on Swarm cluster
 
-# @author Fabrice Jammes SLAC/IN2P3
+# Test for example backup procedure for GKE,
+# Need to be launch inside qserv-deploy container
+# Some interactive operations need to be performed after
+# backup and restore procedure
+
+# @author  Fabrice Jammes, IN2P3/SLAC
 
 set -e
 set -x
@@ -31,16 +35,24 @@ DIR=$(cd "$(dirname "$0")"; pwd -P)
 . "$QSERV_CFG_DIR/env-infra.sh"
 . "$QSERV_CFG_DIR/env.sh"
 
-# Build CSS input data
-upper_id=$((WORKER_COUNT-1))
-for i in $(seq 0 "$upper_id");
-do
-    CSS_INFO="${CSS_INFO}CREATE NODE worker${i} type=worker port=5012 \
-    host=qserv-${i}.qserv; "
-done
+/opt/gcp/create-gke-cluster.sh
+/opt/gcp/setup-nodepools.sh
+
+qserv-start
+/opt/kubectl/run-multinode-tests.sh
+qserv-stop
+
+$DIR/start.sh
+# WARN Need to be run interactively
+kubectl delete statefulset -l app=qserv
+kubectl delete pvc -l app=qserv
+
+$DIR/start.sh -R
+# WARN Need to be run interactively
+kubectl delete statefulset -l app=qserv
+qserv-start
 
 kubectl exec czar-0 -c proxy -- su qserv -l -c ". /qserv/stack/loadLSST.bash && \
     setup qserv_distrib -t qserv-dev && \
     echo \"$CSS_INFO\" | qserv-admin.py -c mysql://qsmaster@127.0.0.1:3306/qservCssData && \
-    qserv-test-integration.py -V DEBUG"
-
+    qserv-check-integration.py"

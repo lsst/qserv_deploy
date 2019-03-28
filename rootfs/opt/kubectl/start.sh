@@ -28,13 +28,14 @@ set -e
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
+. "$QSERV_CFG_DIR/env-infra.sh"
 . "$QSERV_CFG_DIR/env.sh"
 
 CFG_DIR="${DIR}/yaml"
 RESOURCE_DIR="${DIR}/resource"
 CONFIGMAP_DIR="${DIR}/configmap"
 
-YAML_OUT_DIR=$(mktemp -d --tmpdir="/tmp/qserv-deploy" --suffix="-qserv-yaml")
+OUTDIR=$(mktemp -d --tmpdir="/tmp/qserv-deploy" --suffix="-qserv-yaml")
 
 usage() {
   cat << EOD
@@ -63,13 +64,13 @@ if [ $# -ne 0 ] ; then
     exit 2
 fi
 
-INI_FILE="${YAML_OUT_DIR}/statefulset.ini"
+INI_FILE="${OUTDIR}/statefulset.ini"
 
-"$DIR"/update-configmaps.sh "$YAML_OUT_DIR"
+"$DIR"/update-configmaps.sh "$OUTDIR"
 
 echo "Create headless and nodeport services for Qserv"
-cp ${CFG_DIR}/qserv-headless-service.yaml "$YAML_OUT_DIR"
-cp ${CFG_DIR}/qserv-nodeport-service.yaml "$YAML_OUT_DIR"
+cp ${CFG_DIR}/qserv-headless-service.yaml "$OUTDIR"
+cp ${CFG_DIR}/qserv-nodeport-service.yaml "$OUTDIR"
 
 echo "Create statefulsets for Qserv"
 
@@ -100,8 +101,8 @@ EOF
 for service in "czar" "worker" "repl-ctl" "repl-db"
 do
     YAML_TPL="${CFG_DIR}/statefulset-${service}.tpl.yaml"
-    YAML_FILE="${YAML_OUT_DIR}/statefulset-${service}.yaml"
-    "$DIR"/yaml-builder.py -i "$INI_FILE" -r "$RESOURCE_DIR" -t "$YAML_TPL" -o "$YAML_FILE"
+    YAML_FILE="${OUTDIR}/statefulset-${service}.yaml"
+    "$DIR"/yaml-builder.py -i "$INI_FILE" -t "$YAML_TPL" -o "$YAML_FILE"
 done
 
-kubectl apply -f "${YAML_OUT_DIR}"
+kubectl apply -f "${OUTDIR}"
