@@ -33,15 +33,15 @@ spec:
             mountPath: /qserv/data
           - name: secret-backup
             mountPath: /secret-backup
-          - name: config-backup
-            mountPath: /config-backup
+          - name: config-backup-start
+            mountPath: /config-backup-start
       volumes:
         - name: secret-backup
           secret:
             secretName: secret-backup
-        - name: config-backup
+        - name: config-backup-start
           configMap:
-            name: config-backup
+            name: config-backup-start
   volumeClaimTemplates:
   - metadata:
       name: <TIER>-data

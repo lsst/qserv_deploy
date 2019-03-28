@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # LSST Data Management System
-# Copyright 2014 LSST Corporation.
+# Copyright 2019 LSST Corporation.
 #
 # This product includes software developed by the
 # LSST Project (http://www.lsst.org/).
@@ -135,9 +135,9 @@ if __name__ == "__main__":
         yaml_data['spec']['template']['metadata']['labels']['tier'] = tier
 
         if args.restore:
-            cmd = '/config-backup/restore.sh'
+            cmd = '/config-backup-start/restore.sh'
         else:
-            cmd = '/config-backup/backup.sh'
+            cmd = '/config-backup-start/backup.sh'
         yaml_data['spec']['template']['spec']['containers'][0]['command'] = [ 'sh', cmd ]
         yaml_data['spec']['template']['spec']['containers'][0]['volumeMounts'][0]['name'] = args.volume_claim_name
         yaml_data['spec']['volumeClaimTemplates'][0]['metadata']['name'] = args.volume_claim_name

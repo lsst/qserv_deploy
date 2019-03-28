@@ -71,8 +71,8 @@ KUBECTL_SECRET="kubectl create secret generic -o yaml --dry-run"
 KUBECTL_LABEL="kubectl label --local -f - app=qserv -o yaml"
 
 # TODO crash script if KUBECTL_CM crash
-$KUBECTL_CM --from-file="$CONFIGMAP_DIR" config-backup | \
-    $KUBECTL_LABEL > ${OUTDIR}/config-backup.yaml
+$KUBECTL_CM --from-file="$CONFIGMAP_DIR" config-backup-start | \
+    $KUBECTL_LABEL > ${OUTDIR}/config-backup-start.yaml
 
 $KUBECTL_SECRET secret-backup \
         --from-file="/tmp/qserv-deploy/secret/neural-theory-215601-53bf50004612.json" | \
