@@ -17,6 +17,7 @@ spec:
       labels:
         tier: repl-db
         app: qserv
+        headless: enabled
     spec:
       initContainers:
         - command:

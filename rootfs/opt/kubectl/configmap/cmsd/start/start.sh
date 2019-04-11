@@ -5,7 +5,6 @@
 # @author  Fabrice Jammes, IN2P3/SLAC
 
 set -e
-# set -x
 
 # TODO put in CM
 XROOTD_MANAGER="xrootd-0"
@@ -18,12 +17,4 @@ else
 fi
 export INSTANCE_NAME
 
-if [ "$INSTANCE_NAME" = 'worker' ]; then
-
-    # Increase limit for locked-in-memory size
-    MLOCK_AMOUNT=$(grep MemTotal /proc/meminfo | awk '{printf("%.0f\n", $2 - 1000000)}')
-    ulimit -l "$MLOCK_AMOUNT"
-
-fi
-
-su qserv -c "sh /config-start/xrootd.sh"
+su qserv -c "sh /config-start/cmsd.sh"

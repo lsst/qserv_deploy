@@ -191,6 +191,20 @@ if __name__ == "__main__":
 
         yaml_data_tpl = yaml_data['spec']['template']['spec']
 
+        # Configure cmsd and xrootd
+        #
+        if yaml_data['metadata']['name'] in ['qserv', 'xrootd']:
+
+            container_id = _get_container_id('xrootd')
+            if container_id is not None:
+                container = yaml_data_tpl['containers'][container_id]
+                container['image'] = config.get('spec', 'qserv_image')
+
+            container_id = _get_container_id('cmsd')
+            if container_id is not None:
+                container = yaml_data_tpl['containers'][container_id]
+                container['image'] = config.get('spec', 'qserv_image')
+
         # Configure czar and worker
         #
         if yaml_data['metadata']['name'] in ['czar', 'qserv']:
@@ -218,13 +232,6 @@ if __name__ == "__main__":
                                                                 'storage_size')
             else:
                 volumeClaimTemplates[0]['spec']['storageClassName'] = storage_class
-
-            # Configure xrootd
-            #
-            container_id = _get_container_id('xrootd')
-            if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
 
             # Configure mysql-proxy
             #
@@ -274,7 +281,6 @@ if __name__ == "__main__":
             _mount_volume('mariadb', mount_path, volume_name)
             _mount_volume('proxy', mount_path, volume_name)
             _mount_volume('wmgr', mount_path, volume_name)
-            _mount_volume('xrootd', mount_path, volume_name)
 
         # Configure replication controller
         #
@@ -290,9 +296,6 @@ if __name__ == "__main__":
             container_id = _get_container_id('mariadb')
             container = yaml_data_tpl['containers'][container_id]
             container['image'] = config.get('spec', 'mariadb_image')
-
-        else:
-            raise ValueError('Unsupported template file: {}'.format(args.templateFile))
 
         with open(args.yamlFile, 'w') as f:
             f.write(yaml.dump(yaml_data, default_flow_style=False))

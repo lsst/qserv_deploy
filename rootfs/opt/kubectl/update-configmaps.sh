@@ -94,11 +94,13 @@ do
         $KUBECTL_LABEL > $outdir/config-sql-$db.yaml
 done
 
-SERVICES="mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
+SERVICES="cmsd mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
 for service in $SERVICES
 do
-    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
-        $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
+    if [ -d "$CONFIGMAP_DIR/$service/etc" ]; then
+        $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
+            $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
+    fi
     $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start | \
         $KUBECTL_LABEL > $outdir/config-${service}-start.yaml
 done

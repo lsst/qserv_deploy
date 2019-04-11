@@ -18,6 +18,7 @@ spec:
       labels:
         tier: czar
         app: qserv
+        headless: enabled
     spec:
       containers:
         - name: mariadb
@@ -43,40 +44,6 @@ spec:
           - name: config-mariadb-etc
             mountPath: /config-etc
           - name: config-mariadb-start
-            mountPath: /config-start
-          - mountPath: /qserv/data
-            name: qserv-data
-        - name: xrootd
-          image: "<INI_IMAGE>"
-          imagePullPolicy: Always
-          args:
-            - /config-start/start.sh
-          command:
-            - sh
-          env:
-            - name: CZAR
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: CZAR
-            - name: QSERV_DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: QSERV_DOMAIN
-            - name: CZAR_DN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: CZAR_DN
-          securityContext:
-            capabilities:
-              add:
-              - IPC_LOCK
-          volumeMounts:
-          - name: config-xrootd-etc
-            mountPath: /config-etc
-          - name: config-xrootd-start
             mountPath: /config-start
           - mountPath: /qserv/data
             name: qserv-data
@@ -184,12 +151,6 @@ spec:
         - name: config-sql-czar
           configMap:
             name: config-sql-czar
-        - name: config-xrootd-etc
-          configMap:
-            name: config-xrootd-etc
-        - name: config-xrootd-start
-          configMap:
-            name: config-xrootd-start
         - name: config-domainnames
           configMap:
             name: config-domainnames
@@ -215,6 +176,8 @@ spec:
         - name: secret-wmgr
           secret:
             secretName: secret-wmgr
+        - name: xrootd-adminpath
+          emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       name: qserv-data

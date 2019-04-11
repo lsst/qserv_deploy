@@ -18,8 +18,45 @@ spec:
       labels:
         tier: worker
         app: qserv
+        headless: enabled
     spec:
       containers:
+        - name: cmsd
+          image: "<INI_IMAGE>"
+          imagePullPolicy: Always
+          args:
+            - /config-start/start.sh
+          command:
+            - sh
+          env:
+            - name: CZAR
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: CZAR
+            - name: QSERV_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: QSERV_DOMAIN
+            - name: CZAR_DN
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: CZAR_DN
+          securityContext:
+            capabilities:
+              add:
+              - IPC_LOCK
+          volumeMounts:
+          - name: config-xrootd-etc
+            mountPath: /config-etc
+          - name: config-cmsd-start
+            mountPath: /config-start
+          - mountPath: /qserv/data
+            name: qserv-data
+          - name: xrootd-adminpath
+            mountPath: /qserv/run/tmp/xrd
         - name: mariadb
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
@@ -81,6 +118,8 @@ spec:
             mountPath: /config-start
           - mountPath: /qserv/data
             name: qserv-data
+          - name: xrootd-adminpath
+            mountPath: /qserv/run/tmp/xrd
         - name: wmgr
           command:
             - sh
@@ -160,6 +199,12 @@ spec:
           - mountPath: /secret-mariadb
             name: secret-mariadb
       volumes:
+        - name: config-cmsd-start
+          configMap:
+            name: config-cmsd-start
+        - name: config-dot-lsst
+          configMap:
+            name: config-dot-lsst
         - name: config-mariadb-configure
           configMap:
             name: config-mariadb-configure
@@ -206,6 +251,8 @@ spec:
         - name: secret-mariadb
           secret:
             secretName: secret-mariadb
+        - name: xrootd-adminpath
+          emptyDir: {}
   volumeClaimTemplates:
   - metadata:
       name: qserv-data

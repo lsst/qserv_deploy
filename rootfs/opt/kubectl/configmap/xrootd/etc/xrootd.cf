@@ -3,7 +3,7 @@
 
 # CZAR_DN env var must be defined inside container
 # DN stands for "Domain Name"
-set masterdn = $CZAR_DN
+set masterdn = $XROOTD_DN
 
 ############################
 # if: manager node
@@ -39,7 +39,7 @@ fi
 ########################################
 
 # Path to write logging and other information
-all.adminpath /qserv/run/tmp
+all.adminpath /qserv/run/tmp/xrd
 
 # host:port of manager instance (2131 is default)
 all.manager ${masterdn}:2131
