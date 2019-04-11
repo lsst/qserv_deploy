@@ -8,7 +8,7 @@
 set -e
 
 # First disabled worker
-WORKER_FIRST_ID=7
+WORKER_FIRST_ID=0
 
 # Last disabled worker
 WORKER_LAST_ID=24
