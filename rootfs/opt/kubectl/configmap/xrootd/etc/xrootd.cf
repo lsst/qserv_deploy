@@ -21,6 +21,10 @@ else
     # Use server mode
     all.role server
 
+    # Get virtual network id, issued from mysql data
+    set vnidfile = $VNID_FILE
+    cms.vnid <${vnidfile}
+
     # Use XrdSsi plugin
     xrootd.fslib libXrdSsi.so
     ssi.svclib libxrdsvc.so

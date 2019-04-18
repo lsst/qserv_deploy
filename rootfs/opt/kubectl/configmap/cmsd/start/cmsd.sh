@@ -13,11 +13,23 @@ set -e
 
 CONFIG_DIR="/config-etc"
 XROOTD_CONFIG="$CONFIG_DIR/xrootd.cf"
-XRDSSI_CONFIG="$CONFIG_DIR/xrdssi.cf"
 
 # INSTANCE_NAME is required by xrdssi plugin to
 # choose which type of queries to launch against metadata
-if [ "$INSTANCE_NAME" = 'worker' ]; then
+if [ "$INSTANCE_NAME" = 'master' ]; then
+
+    # It seems both cmsd and xrootd pods need to be started
+    # for DNS to resolve
+    until ping -c 1 ${HOSTNAME}.${QSERV_DOMAIN}; do
+        echo "waiting for DNS (${HOSTNAME}.${QSERV_DOMAIN})..."
+        sleep 2
+    done
+
+else
+
+    MYSQLD_SOCKET="/qserv/data/mysql/mysql.sock"
+    XRDSSI_CONFIG="$CONFIG_DIR/xrdssi.cf"
+
     # Wait for xrootd master reachability
     until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${XROOTD_DN}/1094"
     do
@@ -25,14 +37,21 @@ if [ "$INSTANCE_NAME" = 'worker' ]; then
         sleep 2
     done
     OPT_XRD_SSI="-l @libXrdSsiLog.so -+xrdssi $XRDSSI_CONFIG"
+
+    # Write worker id to file
+    while true
+    do
+        WORKER=$(mysql --socket "$MYSQLD_SOCKET" --batch \
+        --skip-column-names --user="$MYSQLD_USER_QSERV" -e "SELECT id FROM qservw_worker.Id;")
+        if [ -n "$WORKER" ]; then
+            break
+        fi
+    done
+    export VNID_FILE="/qserv/data/mysql/cms_vnid.txt"
+    echo "$WORKER" > "$VNID_FILE"
 fi
 
-# When at least one of the current pod's containers
-# readiness health check pass, then dns name resolve.
-until ping -c 1 ${HOSTNAME}.${QSERV_DOMAIN}; do
-    echo "waiting for DNS (${HOSTNAME}.${QSERV_DOMAIN})..."
-    sleep 2
-done
+
 
 # Start cmsd
 #
