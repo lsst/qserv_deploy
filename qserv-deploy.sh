@@ -56,9 +56,6 @@ elif [ $# -eq 1 ]; then
     CMD=$1
 fi
 
-# Get qserv_deploy image name
-. "$QSERV_CFG_DIR/etc/env.sh"
-
 if [ -z "$QSERV_CFG_DIR" ]; then
     >&2 echo "ERROR: Unset QSERV_CFG_DIR parameter \
 (set it as env variable or use -C option)"
@@ -69,6 +66,9 @@ elif [ ! -d "$QSERV_CFG_DIR" ]; then
     usage
     exit 1
 fi
+
+# Get qserv_deploy image name
+. "$QSERV_CFG_DIR/etc/env.sh"
 
 if [ -z "$GCLOUD_DIR" ];
 then

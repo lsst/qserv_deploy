@@ -13,10 +13,8 @@ BASE=$(abs_path "$DIR/..")
 
 QSERV_CFG_DIR="$HOME/.qserv/minikube"
 
-mkdir -p "$QSERV_CFG_DIR/dot-kube"
+"$BASE"/init-cfg.sh "$BASE"/config.examples/minikube-ci "$BASE"/secret.examples "$QSERV_CFG_DIR"
 cp "$HOME"/.kube/config "$QSERV_CFG_DIR"/dot-kube/config
-
-cp -r "$BASE"/config.examples/minikube-ci/* "$QSERV_CFG_DIR"
 
 
 "$BASE"/qserv-deploy.sh -M -C "$QSERV_CFG_DIR" -d /opt/bin/qserv-start

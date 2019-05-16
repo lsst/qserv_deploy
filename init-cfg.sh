@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Initialze the Qserv deploy container configuration
+# Initialize the Qserv deploy container configuration
 
 # @author Fabrice JAMMES <fabrice.jammes@in2p3.fr>
 
@@ -47,11 +47,16 @@ elif [ -d "$QSERV_CFG_DIR" ]; then
     exit 1
 fi
 
+parentdir="$(dirname "$QSERV_CFG_DIR")"
+mkdir "$parentdir"
+
 # Copy example configuration
 cp -r --dereference "$SRC_CFG_DIR" "$QSERV_CFG_DIR"
 
 # Copy example secrets
 mkdir "${QSERV_CFG_DIR}/tmp"
 cp -r --dereference "$SRC_SECRET_DIR" "${QSERV_CFG_DIR}/tmp/secret"
+
+mkdir "$QSERV_CFG_DIR/dot-kube"
 
 echo "Succeed in creating configuration inside ${QSERV_CFG_DIR}"
