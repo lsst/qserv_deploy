@@ -28,21 +28,16 @@ spec:
           command:
             - sh
           env:
-            - name: CZAR
+            - name: XROOTD_MANAGER
               valueFrom:
                 configMapKeyRef:
                   name: config-domainnames
-                  key: CZAR
+                  key: XROOTD_MANAGER
             - name: QSERV_DOMAIN
               valueFrom:
                 configMapKeyRef:
                   name: config-domainnames
                   key: QSERV_DOMAIN
-            - name: CZAR_DN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: CZAR_DN
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc
@@ -58,21 +53,16 @@ spec:
           command:
             - sh
           env:
-            - name: CZAR
+            - name: XROOTD_MANAGER
               valueFrom:
                 configMapKeyRef:
                   name: config-domainnames
-                  key: CZAR
+                  key: XROOTD_MANAGER
             - name: QSERV_DOMAIN
               valueFrom:
                 configMapKeyRef:
                   name: config-domainnames
                   key: QSERV_DOMAIN
-            - name: CZAR_DN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: CZAR_DN
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc

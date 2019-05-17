@@ -1,7 +1,7 @@
 # Unified configuration for xrootd/cmsd for both manager and server instances
 # "if"-block separates manager-only and server-only configuration.
 
-# CZAR_DN env var must be defined inside container
+# XROOTD_DN env var must be defined inside container
 # DN stands for "Domain Name"
 set masterdn = $XROOTD_DN
 

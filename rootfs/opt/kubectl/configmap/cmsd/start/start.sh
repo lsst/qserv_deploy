@@ -6,8 +6,6 @@
 
 set -e
 
-# TODO put in CM
-XROOTD_MANAGER="xrootd-0"
 export XROOTD_DN="${XROOTD_MANAGER}.${QSERV_DOMAIN}"
 
 if [ "$HOSTNAME" = "$XROOTD_MANAGER" ]; then
