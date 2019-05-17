@@ -1,4 +1,3 @@
-CREATE USER IF NOT EXISTS 'qsmaster'@'localhost';
 
 -- Used by xrootd Qserv plugin:
 -- to publish LSST databases and chunks
@@ -48,13 +47,7 @@ CREATE TABLE IF NOT EXISTS qservw_worker.QMetadata (
 
 INSERT INTO qservw_worker.QMetadata (`metakey`, `value`) VALUES ('version', '2');
 
-
 GRANT ALL ON `q\_memoryLockDb`.* TO 'qsmaster'@'localhost';
 
 -- Subchunks databases
 GRANT ALL ON `Subchunks\_%`.* TO 'qsmaster'@'localhost';
-
-
--- Create user for external monitoring applications
-CREATE USER IF NOT EXISTS 'monitor'@'localhost' IDENTIFIED BY 'CHANGEMETOO';
-GRANT PROCESS ON *.* TO 'monitor'@'localhost';

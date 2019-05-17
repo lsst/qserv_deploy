@@ -37,5 +37,5 @@ fi
 echo "Delete all Qserv objects on Kubernetes cluster"
 
 kubectl delete all -l app=qserv --now
-kubectl delete configmap,secret -l app=qserv
+kubectl delete configmap -l app=qserv
 /opt/kubectl/wait-pods-terminate.sh

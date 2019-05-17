@@ -2,7 +2,7 @@
 
 # LSST Data Management System
 # Copyright 2014 LSST Corporation.
-# 
+#
 # This product includes software developed by the
 # LSST Project (http://www.lsst.org/).
 #
@@ -10,14 +10,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
-# You should have received a copy of the LSST License Statement and 
-# the GNU General Public License along with this program.  If not, 
+#
+# You should have received a copy of the LSST License Statement and
+# the GNU General Public License along with this program.  If not,
 # see <http://www.lsstcorp.org/LegalNotices/>.
 
 # Launch Qserv pods on Kubernetes cluster
@@ -64,9 +64,8 @@ if [ $# -ne 0 ] ; then
     exit 2
 fi
 
-INI_FILE="${OUTDIR}/statefulset.ini"
-
 "$DIR"/update-configmaps.sh "$OUTDIR"
+"$DIR"/create-secrets.sh "$OUTDIR"
 
 echo "Create headless and nodeport services for Qserv"
 cp ${CFG_DIR}/qserv-headless-service.yaml "$OUTDIR"
@@ -86,6 +85,8 @@ else
     INI_GKE="False"
 fi
 
+INI_FILE="${OUTDIR}/statefulset.ini"
+WORKER_COUNT=${SIZE_WORKER:-$(echo $WORKERS | wc -w)}
 cat << EOF > "$INI_FILE"
 [spec]
 gke: $INI_GKE

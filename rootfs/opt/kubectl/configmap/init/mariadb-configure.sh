@@ -37,8 +37,15 @@ fi
 DATA_DIR="/qserv/data"
 MYSQLD_DATA_DIR="$DATA_DIR/mysql"
 MYSQLD_SOCKET="$MYSQLD_DATA_DIR/mysql.sock"
-# TODO: Set password using k8s
-MYSQLD_PASSWORD_ROOT="CHANGEME"
+
+
+# Load mariadb secrets
+. /secret-mariadb/mariadb.secret.sh
+if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+    echo "ERROR : mariadb root password is missing, exiting"
+    exit 2
+fi
+
 SQL_DIR="/config-sql"
 
 EXCLUDE_DIR1="lost+found"
@@ -70,7 +77,7 @@ then
 
     echo "-- "
     echo "-- Change mariadb root password."
-    mysqladmin -u root password "$MYSQLD_PASSWORD_ROOT"
+    mysqladmin -u root password "$MYSQL_ROOT_PASSWORD"
 
     echo "-- "
     echo "-- Initializing Qserv database"
@@ -83,7 +90,11 @@ then
     fi
     for file_name in "${SQL_DIR}/${INSTANCE_NAME}"/*; do
         echo "-- Loading ${file_name} in MySQL"
-        if mysql -vvv --user="root" --password="${MYSQLD_PASSWORD_ROOT}" \
+        basename=$(basename "$file_name")
+        if [ $basename == 'privileges.tpl.sql']; then
+            sed -i "s/<MYSQL_MONITOR_PASSWORD>/${MYSQL_MONITOR_PASSWORD}/g" "$file_name"
+        fi
+        if mysql -vvv --user="root" --password="${MYSQL_ROOT_PASSWORD}" \
             < "${file_name}"
         then
             echo "-- -> success"
@@ -100,12 +111,12 @@ then
         # below will be removed at each container startup.
         # That's why this shared library is currently
         # installed in mysql plugin directory at image creation.
-        echo "$MYSQLD_PASSWORD_ROOT" | scisql-deploy.py --mysql-dir="$MYSQL_DIR" \
+        echo "$MYSQL_ROOT_PASSWORD" | scisql-deploy.py --mysql-dir="$MYSQL_DIR" \
             --mysql-socket="$MYSQLD_SOCKET"
     fi
 
     echo "-- Stop mariadb server."
-    mysqladmin -u root --password="$MYSQLD_PASSWORD_ROOT" shutdown
+    mysqladmin -u root --password="$MYSQL_ROOT_PASSWORD" shutdown
     rm "$STATE_FILE"
 else
     echo "WARN: Skip mysqld initialization because of non empty $DATA_DIR:"

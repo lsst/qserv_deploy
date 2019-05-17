@@ -110,7 +110,9 @@ spec:
             name: config-wmgr-etc
           - mountPath: /qserv/data
             name: qserv-data
-          - mountPath: /secret
+          - mountPath: /secret-mariadb
+            name: secret-mariadb
+          - mountPath: /secret-wmgr
             name: secret-wmgr
         - name: repl
           command:
@@ -155,10 +157,9 @@ spec:
             name: config-sql-worker
           - mountPath: /qserv/data
             name: qserv-data
+          - mountPath: /secret-mariadb
+            name: secret-mariadb
       volumes:
-        - name: config-dot-lsst
-          configMap:
-            name: config-dot-lsst
         - name: config-mariadb-configure
           configMap:
             name: config-mariadb-configure
@@ -202,6 +203,9 @@ spec:
         - name: secret-wmgr
           secret:
             secretName: secret-wmgr
+        - name: secret-mariadb
+          secret:
+            secretName: secret-mariadb
   volumeClaimTemplates:
   - metadata:
       name: qserv-data

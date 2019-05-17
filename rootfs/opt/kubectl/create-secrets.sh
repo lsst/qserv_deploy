@@ -20,7 +20,7 @@
 # the GNU General Public License along with this program.  If not, 
 # see <http://www.lsstcorp.org/LegalNotices/>.
 
-# Update Qserv configmaps 
+# Create Qserv secrets if they do not exists yet, else does nothing
 
 # @author  Fabrice Jammes, IN2P3/SLAC
 
@@ -29,12 +29,7 @@ set -e
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
-CONFIGMAP_DIR="${DIR}/configmap"
-CZAR="czar-0"
-REPL_CTL="repl-ctl"
-REPL_DB="repl-db-0"
-QSERV_DOMAIN="qserv"
-CZAR_DN="${CZAR}.${QSERV_DOMAIN}"
+SECRET_DIR="/tmp/qserv-deploy/secret"
 
 usage() {
   cat << EOD
@@ -44,8 +39,10 @@ usage() {
   Available options:
     -h          this message
 
-  Produce yaml files for Qserv configmaps in <output_directory>.
+  Produce yaml files for Qserv secrets in <output_directory>,
+  if they do not exists, else does nothing.
   Output directory must exist and be writable.
+  Secret input must be available in ${SECRET_DIR}.
 
 EOD
 }
@@ -69,36 +66,19 @@ outdir=$1
 # strip trailing slash
 outdir=$(echo $outdir | sed 's%\(.*[^/]\)/*%\1%')
 
-
-echo "Create or update kubernetes configmaps for Qserv"
-
-KUBECTL_CM="kubectl create configmap -o yaml --dry-run"
 KUBECTL_SECRET="kubectl create secret generic -o yaml --dry-run"
 KUBECTL_LABEL="kubectl label --local -f - app=qserv -o yaml"
 
-$KUBECTL_CM config-domainnames --from-literal=CZAR="$CZAR" \
-    --from-literal=CZAR_DN="$CZAR_DN" \
-    --from-literal=QSERV_DOMAIN="$QSERV_DOMAIN" \
-    --from-literal=REPL_CTL="$REPL_CTL" \
-    --from-literal=REPL_DB="$REPL_DB" | $KUBECTL_LABEL > $outdir/config-domainnames.yaml
+if  kubectl get secret -l app=qserv --no-headers  > /dev/null 2>&1
+then
+    echo "Create kubernetes secrets for Qserv"
+    $KUBECTL_SECRET secret-wmgr \
+        --from-file="$SECRET_DIR/wmgr.secret" | \
+        $KUBECTL_LABEL > $outdir/secret-wmgr.yaml
 
-$KUBECTL_CM --from-file="$CONFIGMAP_DIR/dot-lsst" config-dot-lsst | $KUBECTL_LABEL > $outdir/config-dot-lsst.yaml
-
-$KUBECTL_CM --from-file="$CONFIGMAP_DIR/init/mariadb-configure.sh" config-mariadb-configure | \
-    $KUBECTL_LABEL > $outdir/config-mariadb-configure.yaml
-
-DATABASES="czar repl worker"
-for db in $DATABASES
-do
-    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/init/sql/$db" "config-sql-$db" | \
-        $KUBECTL_LABEL > $outdir/config-sql-$db.yaml
-done
-
-SERVICES="mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
-for service in $SERVICES
-do
-    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
-        $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
-    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start | \
-        $KUBECTL_LABEL > $outdir/config-${service}-start.yaml
-done
+    $KUBECTL_SECRET secret-mariadb \
+        --from-file="$SECRET_DIR/mariadb.secret.sh" | \
+        $KUBECTL_LABEL > $outdir/secret-mariadb.yaml
+else
+    echo "WARN: use existing secrets"
+fi

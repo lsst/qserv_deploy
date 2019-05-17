@@ -1,6 +1,7 @@
 #
 # configuration file for wmgrService, production version
 #
+# .py format
 
 # interface to listen to, defaults to 127.0.0.1
 WMGR_INTERFACE = '0.0.0.0'
@@ -16,10 +17,6 @@ JSON_AS_ASCII = False
 JSON_SORT_KEYS = True
 JSONIFY_PRETTYPRINT_REGULAR = False
 
-# complex secret key is needed for things like auth and session
-# it is used by Flask web framework
-SECRET_KEY = 'CHANGEME'
-
 # ======== application-specific parameters =========
 
 #  database connection parameters, use None for defaults
@@ -33,7 +30,7 @@ DB_PASSWD = ''
 
 # special account used to create new databases
 DB_USER_PRIV = 'root'
-DB_PASSWD_PRIV = 'CHANGEME'
+DB_PASSWD_PRIV = '<ENV_MYSQL_ROOT_PASSWORD>'
 
 # parameters for mysql-proxy connection, these are only useful
 # for czar wmgr instance
@@ -63,4 +60,4 @@ TMP_DIR = "/qserv/run/tmp"
 AUTH_TYPE = "digest"
 
 # location of the file containing a secret
-SECRET_FILE = "/secret/wmgr.secret"
+SECRET_FILE = "/secret-wmgr/wmgr.secret"

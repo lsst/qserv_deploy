@@ -22,4 +22,6 @@ PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+CREATE USER `probe`@`localhost`;
+
 FLUSH PRIVILEGES;

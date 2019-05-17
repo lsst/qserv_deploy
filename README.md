@@ -15,13 +15,12 @@ Status](https://travis-ci.org/lsst/qserv_deploy.svg?branch=master)](https://trav
    git clone https://github.com/lsst/qserv_deploy.git
 
    # Create a directory to store your cluster(s) configuration
-   mkdir -p "$HOME/.qserv/"
+   QSERV_CFG_DIR="$HOME/.qserv/my-first-cluster"
 
    # Use an example configuration, here the gke one
-   cp -r qserv_deploy/config.examples/gke-dev "$HOME/.qserv/"
-
-   # Optional
-   QSERV_CFG_DIR="$HOME/.qserv/my-gke-cluster"
+   # gke-dev directory contains an example configuration for lightweight gke cluster
+   # Use init-cfg.sh inline help to know more configuration initialization
+   ./init-cfg.sh ./config.examples/gke-dev ./secret.examples "$QSERV_CFG_DIR"
 ```
 
 ## Create a Kubernetes cluster (optional)
@@ -30,7 +29,7 @@ An existing up and running Kubernetes cluster might be used, or it is also possi
 - on Google Kubernetes Engine: [GKE documentation](./doc/gke.md)
 - on Minikube: [Minikube documentation](./doc/minikube.md)
 
-## Retrieve kubeconfig 
+## Retrieve kubeconfig
 
 ### For bare-metal cluster
 
