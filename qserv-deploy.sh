@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Wrapper for the Qserv deploy container
-# Check for needed variables
+# Launcher for the Qserv deploy container
 
+# @author Fabrice Jammes <fabrice.jammes@clermont.in2p3.fr>
 # @author Benjamin Roziere <benjamin.roziere@clermont.in2p3.fr>
 
 set -e

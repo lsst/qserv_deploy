@@ -30,13 +30,13 @@ spec:
           livenessProbe:
             tcpSocket:
               port: mariadb
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            initialDelaySeconds: 10
+            periodSeconds: 5
           readinessProbe:
             tcpSocket:
               port: mariadb
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 5
           ports:
           - name: mariadb
             containerPort: 3306

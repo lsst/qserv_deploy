@@ -8,7 +8,8 @@ metadata:
 spec:
   serviceName: qserv
   podManagementPolicy: "Parallel"
-  replicas: <REPLICAS>
+  # replicas is updated by template engine
+  replicas: 1
   selector:
     matchLabels:
       tier: worker
@@ -60,16 +61,16 @@ spec:
             - /config-start/start.sh
           livenessProbe:
             tcpSocket:
-              port: mariadb-port
+              port: mariadb
             initialDelaySeconds: 15
-            periodSeconds: 20
+            periodSeconds: 5
           readinessProbe:
             tcpSocket:
-              port: mariadb-port
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              port: mariadb
+            initialDelaySeconds: 15
+            periodSeconds: 5
           ports:
-          - name: mariadb-port
+          - name: mariadb
             containerPort: 3306
           volumeMounts:
           - name: config-mariadb-etc
@@ -96,6 +97,19 @@ spec:
                 configMapKeyRef:
                   name: config-domainnames
                   key: QSERV_DOMAIN
+          livenessProbe:
+            tcpSocket:
+              port: xrootd
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: xrootd
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          ports:
+          - name: xrootd
+            containerPort: 1094
           securityContext:
             capabilities:
               add:
@@ -124,14 +138,17 @@ spec:
           imagePullPolicy: Always
           livenessProbe:
             tcpSocket:
-              port: 5012
-            initialDelaySeconds: 15
-            periodSeconds: 20
+              port: wmgr
+            initialDelaySeconds: 10
+            periodSeconds: 5
           readinessProbe:
             tcpSocket:
-              port: 5012
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              port: wmgr
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          ports:
+          - name: wmgr
+            containerPort: 5012
           volumeMounts:
           - mountPath: /config-start
             name: config-wmgr-start
