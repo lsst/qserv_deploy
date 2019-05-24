@@ -12,6 +12,7 @@ DIR=$(cd "$(dirname "$0")"; pwd -P)
 BASE=$(abs_path "$DIR/..")
 
 QSERV_CFG_DIR="$HOME/.qserv/minikube"
+rm -rf "$QSERV_CFG_DIR"
 
 "$BASE"/init-cfg.sh "$BASE"/config.examples/minikube-ci "$BASE"/secret.examples "$QSERV_CFG_DIR"
 cp "$HOME"/.kube/config "$QSERV_CFG_DIR"/dot-kube/config

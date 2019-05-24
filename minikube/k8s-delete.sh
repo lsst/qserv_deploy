@@ -12,6 +12,8 @@ touch $HOME/.kube/config
 
 export KUBECONFIG=$HOME/.kube/config
 
+
+sudo service localkube stop
 sudo -E "$MINIKUBE_BIN" stop
 sudo -E "$MINIKUBE_BIN" delete || echo "WARN: unable to delete minikube"
 sudo rm -rf /etc/kubernetes

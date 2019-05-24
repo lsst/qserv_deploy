@@ -48,7 +48,7 @@ elif [ -d "$QSERV_CFG_DIR" ]; then
 fi
 
 parentdir="$(dirname "$QSERV_CFG_DIR")"
-mkdir "$parentdir"
+mkdir -p "$parentdir"
 
 # Copy example configuration
 cp -r --dereference "$SRC_CFG_DIR" "$QSERV_CFG_DIR"

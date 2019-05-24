@@ -1,12 +1,12 @@
 sudo: required
-services: docker
 language: minimal
+dist: xenial
 
 before_script:
-  - ./minikube/minikube-create.sh
+  - ./kind/k8s-create.sh
 
 script:
-  - ./minikube/launch.sh
+  - ./kind/launch.sh
 
 after_success:
   - echo "Push qserv_deploy image to Docker Hub"
