@@ -2,9 +2,6 @@
 # "if"-block separates manager-only and server-only configuration.
 
 
-# DN stands for "Domain Name"
-set managerdn = $XROOTD_DN
-
 ############################
 # if: manager node
 ############################
@@ -12,8 +9,15 @@ if named manager
 
     # Use manager mode
     all.role manager
-    all.manager xrootd-0:2131
 
+    # Connect to manager without using DNS
+    # Because k8s require next order:
+    #   1 service starts
+    #   2 readiness probe returns true
+    #   3 DNS registration is performed
+    set managerhost = $HOSTNAME
+    # all.manager ${managerdn}:2131
+    all.manager xrootd-mgr-0:2131
 
 ############################
 # else: server nodes
@@ -27,8 +31,10 @@ else
     set vnidfile = $VNID_FILE
     cms.vnid <${vnidfile}
 
+    # DN stands for "Domain Name"
+    set managerdn = $XROOTD_DN
     # host:port of manager instance (2131 is default)
-    all.manager ${managerdn}:2131
+    all.manager xrootd-mgr-0.qserv:2131
 
     # Use XrdSsi plugin
     xrootd.fslib libXrdSsi.so

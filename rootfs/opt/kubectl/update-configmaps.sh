@@ -35,7 +35,7 @@ REPL_CTL="repl-ctl"
 REPL_DB="repl-db-0"
 QSERV_DOMAIN="qserv"
 CZAR_DN="${CZAR}.${QSERV_DOMAIN}"
-XROOTD_MANAGER="xrootd-0"
+XROOTD_MANAGER="xrootd-mgr-0"
 
 usage() {
   cat << EOD
