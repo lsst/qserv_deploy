@@ -3,19 +3,19 @@ kind: StatefulSet
 metadata:
   name: xrootd
   labels:
-    tier: xrootd
+    tier: xrootd-mgr
     app: qserv
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tier: xrootd
+      tier: xrootd-mgr
       app: qserv
-  serviceName: qserv 
+  serviceName: qserv
   template:
     metadata:
       labels:
-        tier: xrootd
+        tier: xrootd-mgr
         app: qserv
         headless: enabled
     spec:
