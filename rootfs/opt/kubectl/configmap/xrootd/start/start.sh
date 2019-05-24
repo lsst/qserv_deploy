@@ -5,12 +5,12 @@
 # @author  Fabrice Jammes, IN2P3/SLAC
 
 set -e
-# set -x
+set -x
 
 export XROOTD_DN="${XROOTD_MANAGER}.${QSERV_DOMAIN}"
 
 if [ "$HOSTNAME" = "$XROOTD_MANAGER" ]; then
-    INSTANCE_NAME='master'
+    INSTANCE_NAME='manager'
 else
     INSTANCE_NAME='worker'
 fi

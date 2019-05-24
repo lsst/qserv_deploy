@@ -8,7 +8,7 @@ set managerdn = $XROOTD_DN
 ############################
 # if: manager node
 ############################
-if named master
+if named manager
 
     # Use manager mode
     all.role manager
