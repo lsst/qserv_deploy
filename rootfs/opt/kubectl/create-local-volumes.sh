@@ -30,6 +30,7 @@ set -x
 
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 
+. "$QSERV_CFG_DIR/env-infra.sh"
 . "$QSERV_CFG_DIR/env.sh"
 
 usage() {
