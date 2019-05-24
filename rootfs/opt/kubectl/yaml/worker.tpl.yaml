@@ -26,9 +26,10 @@ spec:
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           args:
-            - /config-start/start.sh
+            - -S
+            - cmsd
           command:
-            - sh
+            - /config-start/start.sh
           env:
             - name: XROOTD_MANAGER
               valueFrom:
@@ -47,8 +48,8 @@ spec:
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc
-          - name: config-cmsd-start
-            mountPath: /config-start
+          - mountPath: /config-start
+            name: config-xrootd-start
           - mountPath: /qserv/data
             name: qserv-data
           - name: xrootd-adminpath
@@ -206,9 +207,6 @@ spec:
           - mountPath: /secret-mariadb
             name: secret-mariadb
       volumes:
-        - name: config-cmsd-start
-          configMap:
-            name: config-cmsd-start
         - name: config-dot-lsst
           configMap:
             name: config-dot-lsst
@@ -227,6 +225,7 @@ spec:
         - name: config-xrootd-start
           configMap:
             name: config-xrootd-start
+            defaultMode: 0555
         - name: config-domainnames
           configMap:
             name: config-domainnames

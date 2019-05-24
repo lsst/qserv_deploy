@@ -16,7 +16,7 @@ XROOTD_CONFIG="$CONFIG_DIR/xrootd.cf"
 
 # INSTANCE_NAME is required by xrdssi plugin to
 # choose which type of queries to launch against metadata
-if [ "$INSTANCE_NAME" = 'master' ]; then
+if [ "$INSTANCE_NAME" = 'manager' ]; then
 
     # It seems both cmsd and xrootd pods need to be started
     # for DNS to resolve
@@ -45,7 +45,7 @@ else
     # Wait for xrootd master reachability
     until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${XROOTD_DN}/1094"
     do
-        echo "waiting for xrootd master (${XROOTD_DN})..."
+        echo "Wait for xrootd manager (${XROOTD_DN})..."
         sleep 2
     done
     OPT_XRD_SSI="-l @libXrdSsiLog.so -+xrdssi $XRDSSI_CONFIG"
@@ -62,8 +62,6 @@ else
     export VNID_FILE="/qserv/data/mysql/cms_vnid.txt"
     echo "$WORKER" > "$VNID_FILE"
 fi
-
-
 
 # Start cmsd
 #

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: xrootd
+  name: xrootd-mgr
   labels:
-    tier: xrootd
+    tier: xrootd-mgr
     app: qserv
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      tier: xrootd
+      tier: xrootd-mgr
       app: qserv
-  serviceName: qserv 
+  serviceName: qserv
   template:
     metadata:
       labels:
-        tier: xrootd
+        tier: xrootd-mgr
         app: qserv
         headless: enabled
     spec:
@@ -24,9 +24,10 @@ spec:
           image: "<INI_IMAGE>"
           imagePullPolicy: Always
           args:
-            - /config-start/start.sh
+            - -S
+            - cmsd
           command:
-            - sh
+            - /config-start/start.sh
           env:
             - name: XROOTD_MANAGER
               valueFrom:
@@ -41,7 +42,7 @@ spec:
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc
-          - name: config-cmsd-start
+          - name: config-xrootd-start
             mountPath: /config-start
           - name: xrootd-adminpath
             mountPath: /qserv/run/tmp/xrd
@@ -74,14 +75,12 @@ spec:
           - name: xrootd-adminpath
             mountPath: /qserv/run/tmp/xrd
       volumes:
-        - name: config-cmsd-start
-          configMap:
-            name: config-cmsd-start
         - name: config-xrootd-etc
           configMap:
             name: config-xrootd-etc
         - name: config-xrootd-start
           configMap:
             name: config-xrootd-start
+            defaultMode: 0555
         - name: xrootd-adminpath
           emptyDir: {}
