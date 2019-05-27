@@ -95,7 +95,7 @@ do
         $KUBECTL_LABEL > $outdir/config-sql-$db.yaml
 done
 
-SERVICES="cmsd mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
+SERVICES="mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
 for service in $SERVICES
 do
     if [ -d "$CONFIGMAP_DIR/$service/etc" ]; then
