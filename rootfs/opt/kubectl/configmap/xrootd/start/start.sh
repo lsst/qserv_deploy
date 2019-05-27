@@ -9,7 +9,8 @@ set -x
 
 export XROOTD_DN="${XROOTD_MANAGER}.${QSERV_DOMAIN}"
 
-if [ "$HOSTNAME" = "$XROOTD_MANAGER" ]; then
+if hostname | egrep "^xrootd-mgr-[0-9]+"
+then
     INSTANCE_NAME='manager'
 else
     INSTANCE_NAME='worker'

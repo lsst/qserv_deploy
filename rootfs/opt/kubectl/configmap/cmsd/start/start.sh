@@ -11,7 +11,8 @@ export XROOTD_DN="${XROOTD_MANAGER}.${QSERV_DOMAIN}"
 
 # TODO check that HOSTNAME start with xrootd-mgr,
 # instead of equality
-if [ "$HOSTNAME" = "$XROOTD_MANAGER" ]; then
+if hostname | egrep "^xrootd-mgr-[0-9]+"
+then
     INSTANCE_NAME='manager'
 else
     INSTANCE_NAME='worker'

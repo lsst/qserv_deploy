@@ -17,7 +17,7 @@ if named manager
     #   3 DNS registration is performed
     set managerhost = $HOSTNAME
     # all.manager ${managerdn}:2131
-    all.manager xrootd-mgr-0:2131
+    all.manager ${managerhost}:2131
 
 ############################
 # else: server nodes
@@ -31,11 +31,6 @@ else
     set vnidfile = $VNID_FILE
     cms.vnid <${vnidfile}
 
-    # DN stands for "Domain Name"
-    set managerdn = $XROOTD_DN
-    # host:port of manager instance (2131 is default)
-    all.manager xrootd-mgr-0.qserv:2131
-
     # Use XrdSsi plugin
     xrootd.fslib libXrdSsi.so
     ssi.svclib libxrdsvc.so
@@ -44,6 +39,12 @@ else
     # Force disable asyncronous access
     # because of XrdSsi
     xrootd.async off
+
+    # DN stands for "Domain Name"
+    set managerdn = $XROOTD_DN
+    # host:port of manager instance (2131 is default)
+    all.manager xrootd-mgr-0.qserv:2131
+    all.manager xrootd-mgr-1.qserv:2131
 
     ssi.trace all debug
 

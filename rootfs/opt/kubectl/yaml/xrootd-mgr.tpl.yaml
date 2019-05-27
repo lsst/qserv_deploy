@@ -6,7 +6,7 @@ metadata:
     tier: xrootd-mgr
     app: qserv
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       tier: xrootd-mgr
