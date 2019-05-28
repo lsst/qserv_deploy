@@ -61,5 +61,11 @@ fi
 
 # Start xrootd
 #
+if  [ "$HOSTNAME" = "qserv-10" ]; then
+    while true;
+    do
+        sleep 3600
+    done
+fi
 echo "Start xrootd"
 xrootd -c "$XROOTD_CONFIG" -n "$INSTANCE_NAME" -I v4 $OPT_XRD_SSI
