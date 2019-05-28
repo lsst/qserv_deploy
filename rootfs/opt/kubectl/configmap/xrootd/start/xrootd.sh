@@ -63,9 +63,18 @@ until ping -c 1 ${HOSTNAME}.${QSERV_DOMAIN}; do
   sleep 2
 done
 
+if  [ "$HOSTNAME" = "qserv-10" ]; then
+    while true;
+    do
+        sleep 3600
+    done
+fi
+
 # Start cmsd and xrootd
 #
 PROCESSES="cmsd xrootd"
+
+
 
 for p in $PROCESSES;
 do
