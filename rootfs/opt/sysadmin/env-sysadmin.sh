@@ -15,7 +15,7 @@ else
 fi
 
 # Machine names
-ENV_INFRASTRUCTURE_FILE="$QSERV_CFG_DIR/env-infra.sh"
+ENV_INFRASTRUCTURE_FILE="$QSERV_CFG_DIR/etc/env-infra.sh"
 if [ -r "$ENV_INFRASTRUCTURE_FILE" ]; then
     . "$ENV_INFRASTRUCTURE_FILE"
 else
@@ -25,7 +25,7 @@ fi
 
 if [ ! $CI ]; then
     # GNU parallel ssh configuration
-    PARALLEL_SSH_CFG="$QSERV_CFG_DIR/sshloginfile"
+    PARALLEL_SSH_CFG="$QSERV_CFG_DIR/etc/sshloginfile"
     if [ -z "$CREATE_PARALLEL_SSH_CFG" -a ! -r "$PARALLEL_SSH_CFG" ]; then
         echo "ERROR: $PARALLEL_SSH_CFG is not readable"
         exit 1
