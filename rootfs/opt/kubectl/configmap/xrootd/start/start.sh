@@ -24,9 +24,4 @@ if [ "$INSTANCE_NAME" = 'worker' ]; then
 
 fi
 
-if  [ "$HOSTNAME" = "qserv-10" ]; then
-    export https_proxy="http://ccqservproxy.in2p3.fr:3128"
-    export http_proxy="http://ccqservproxy.in2p3.fr:3128"
-    yum install -y valgrind
-fi
 su qserv -c "sh /config-start/xrootd.sh"
