@@ -96,7 +96,7 @@ replicas: $WORKER_COUNT
 repl_image: $REPL_IMAGE
 EOF
 
-for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd-mgr"
+for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd-mgr-0"
 do
     YAML_TPL="${CFG_DIR}/${service}.tpl.yaml"
     YAML_FILE="${OUTDIR}/${service}.yaml"

@@ -1,23 +1,21 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: ReplicaSet
 metadata:
-  name: xrootd-mgr
+  name: xrootd-mgr-0
   labels:
-    tier: xrootd-mgr
+    tier: xrootd-mgr-0
     app: qserv
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      tier: xrootd-mgr
+      tier: xrootd-mgr-0
       app: qserv
-  serviceName: qserv
   template:
     metadata:
       labels:
-        tier: xrootd-mgr
+        tier: xrootd-mgr-0
         app: qserv
-        headless: enabled
     spec:
       containers:
         - name: cmsd

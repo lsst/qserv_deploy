@@ -23,11 +23,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    # the port that this service should serve on
     - name: qserv 
       port: 4040
       nodePort: 30040
-  # label keys and values that must match in order to receive traffic for this service
   selector:
     app: qserv
     tier: czar
@@ -41,9 +39,27 @@ metadata:
     tier: repl-ctl
 spec:
   ports:
-    # the port that this service should serve on
-    - name: repl-ctl 
+    - name: http 
       port: 80
   selector:
     app: qserv
     tier: repl-ctl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xrootd-mgr-0
+  labels:
+    app: qserv
+    tier: xrootd-mgr-0
+spec:
+  ports:
+    # Used by qserv workers
+    - port: 2131
+      name: cmsd
+    # Used by repl-ctl
+    - port: 1094
+      name: xrootd
+  selector:
+    app: qserv
+    tier: xrootd-mgr-0

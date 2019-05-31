@@ -18,10 +18,10 @@ XROOTD_CONFIG="$CONFIG_DIR/xrootd.cf"
 # choose which type of queries to launch against metadata
 if [ "$INSTANCE_NAME" = 'manager' ]; then
 
-    # It seems both cmsd and xrootd pods need to be started
-    # for DNS to resolve
-    until ping -c 1 ${HOSTNAME}.${QSERV_DOMAIN}; do
-        echo "waiting for DNS (${HOSTNAME}.${QSERV_DOMAIN})..."
+    # Wait for xrootd master reachability
+    until timeout 1 bash -c "cat < /dev/null > /dev/tcp/localhost/1094"
+    do
+        echo "Wait for xrootd manager (${XROOTD_DN})..."
         sleep 2
     done
 

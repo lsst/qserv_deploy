@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
         # Configure cmsd and xrootd
         #
-        if yaml_data['metadata']['name'] in ['qserv', 'xrootd-mgr']:
+        if yaml_data['metadata']['name'] in ['qserv', 'xrootd-mgr-0']:
 
             container_id = _get_container_id('xrootd')
             if container_id is not None:

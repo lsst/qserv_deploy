@@ -38,7 +38,7 @@ fi
 
 export XROOTD_DN="${XROOTD_MANAGER}.${QSERV_DOMAIN}"
 
-if hostname | egrep "^xrootd-mgr-[0-9]+"
+if hostname | egrep "^xrootd-mgr-"
 then
     INSTANCE_NAME='manager'
 else
