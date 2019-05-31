@@ -7,19 +7,37 @@
 set -e
 set -x
 
+#CNI_PLUGIN="calico"
+#CNI_PLUGIN="flannel"
+CNI_PLUGIN="weave"
+
 DIR=$(cd "$(dirname "$0")"; pwd -P)
 . "$DIR/env-sysadmin.sh"
 
 echo "Create Kubernetes cluster"
 ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- systemctl start kubelet"
 TOKEN=$(ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- kubeadm token generate")
-# TODO add option for openstack
+
+# Enable use of kubectl through ssh tunnel
 SSH_TUNNEL_OPT="--apiserver-cert-extra-sans=localhost"
-ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- kubeadm init $SSH_TUNNEL_OPT --token '$TOKEN'"
+
+case "$CNI_PLUGIN" in
+        calico)
+            CNI_OPT="--pod-network-cidr=192.168.0.0/16"
+            ;;
+
+        flannel)
+            CNI_OPT="--pod-network-cidr=10.244.0.0/16"
+            ;;
+
+esac
+
+ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo -- kubeadm init $SSH_TUNNEL_OPT \
+    $CNI_OPT --token '$TOKEN'"
 
 "$DIR"/export-kubeconfig.sh
 
-"$DIR"/../kubectl/install-weave.sh
+"$DIR"/../kubectl/install-cni.sh "$CNI_PLUGIN"
 
 HASH=$(ssh $SSH_CFG_OPT "$ORCHESTRATOR" "sudo openssl x509 -pubkey -in \
     /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null \
