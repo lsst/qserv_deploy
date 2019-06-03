@@ -35,6 +35,7 @@ REPL_CTL="repl-ctl"
 REPL_DB="repl-db-0"
 QSERV_DOMAIN="qserv"
 CZAR_DN="${CZAR}.${QSERV_DOMAIN}"
+XROOTD_MANAGER="xrootd-0"
 
 usage() {
   cat << EOD
@@ -69,7 +70,6 @@ outdir=$1
 # strip trailing slash
 outdir=$(echo $outdir | sed 's%\(.*[^/]\)/*%\1%')
 
-
 echo "Create or update kubernetes configmaps for Qserv"
 
 KUBECTL_CM="kubectl create configmap -o yaml --dry-run"
@@ -80,7 +80,8 @@ $KUBECTL_CM config-domainnames --from-literal=CZAR="$CZAR" \
     --from-literal=CZAR_DN="$CZAR_DN" \
     --from-literal=QSERV_DOMAIN="$QSERV_DOMAIN" \
     --from-literal=REPL_CTL="$REPL_CTL" \
-    --from-literal=REPL_DB="$REPL_DB" | $KUBECTL_LABEL > $outdir/config-domainnames.yaml
+    --from-literal=REPL_DB="$REPL_DB" \
+    --from-literal=XROOTD_MANAGER="$XROOTD_MANAGER" | $KUBECTL_LABEL > $outdir/config-domainnames.yaml
 
 $KUBECTL_CM --from-file="$CONFIGMAP_DIR/dot-lsst" config-dot-lsst | $KUBECTL_LABEL > $outdir/config-dot-lsst.yaml
 
@@ -94,11 +95,13 @@ do
         $KUBECTL_LABEL > $outdir/config-sql-$db.yaml
 done
 
-SERVICES="mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
+SERVICES="cmsd mariadb proxy repl-ctl repl-db repl-wrk wmgr xrootd"
 for service in $SERVICES
 do
-    $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
-        $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
+    if [ -d "$CONFIGMAP_DIR/$service/etc" ]; then
+        $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/etc" config-${service}-etc | \
+            $KUBECTL_LABEL > $outdir/config-${service}-etc.yaml
+    fi
     $KUBECTL_CM --from-file="$CONFIGMAP_DIR/$service/start" config-${service}-start | \
         $KUBECTL_LABEL > $outdir/config-${service}-start.yaml
 done

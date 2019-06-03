@@ -32,8 +32,6 @@ DIR=$(cd "$(dirname "$0")"; pwd -P)
 . "$QSERV_CFG_DIR/env.sh"
 
 CFG_DIR="${DIR}/yaml"
-RESOURCE_DIR="${DIR}/resource"
-CONFIGMAP_DIR="${DIR}/configmap"
 
 OUTDIR=$(mktemp -d --tmpdir="/tmp/qserv-deploy" --suffix="-qserv-yaml")
 
@@ -68,8 +66,7 @@ fi
 "$DIR"/create-secrets.sh "$OUTDIR"
 
 echo "Create headless and nodeport services for Qserv"
-cp ${CFG_DIR}/qserv-headless-service.yaml "$OUTDIR"
-cp ${CFG_DIR}/qserv-nodeport-service.yaml "$OUTDIR"
+cp ${CFG_DIR}/qserv-services.yaml "$OUTDIR"
 
 echo "Create statefulsets for Qserv"
 
@@ -99,10 +96,10 @@ replicas: $WORKER_COUNT
 repl_image: $REPL_IMAGE
 EOF
 
-for service in "czar" "worker" "repl-ctl" "repl-db"
+for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd"
 do
-    YAML_TPL="${CFG_DIR}/statefulset-${service}.tpl.yaml"
-    YAML_FILE="${OUTDIR}/statefulset-${service}.yaml"
+    YAML_TPL="${CFG_DIR}/${service}.tpl.yaml"
+    YAML_FILE="${OUTDIR}/${service}.yaml"
     "$DIR"/yaml-builder.py -i "$INI_FILE" -t "$YAML_TPL" -o "$YAML_FILE"
 done
 

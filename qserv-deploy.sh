@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# Wrapper for the Qserv deploy container
-# Check for needed variables
+# Launcher for the Qserv deploy container
 
+# @author Fabrice Jammes <fabrice.jammes@clermont.in2p3.fr>
 # @author Benjamin Roziere <benjamin.roziere@clermont.in2p3.fr>
 
 set -e
@@ -91,6 +91,7 @@ CONTAINER_HOME="/home/$USER"
 
 mkdir -p $GCLOUD_DIR
 MOUNTS="$MOUNTS -v $GCLOUD_DIR:$CONTAINER_HOME/.config"
+MOUNTS="$MOUNTS -v $DIR/homefs:$CONTAINER_HOME"
 MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
 
 MOUNTS="$MOUNTS -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro"
@@ -99,7 +100,6 @@ DOT_KUBE_DIR="$QSERV_CFG_DIR/dot-kube"
 mkdir -p "$DOT_KUBE_DIR"
 MOUNTS="$MOUNTS -v $DOT_KUBE_DIR:$CONTAINER_HOME/.kube"
 
-MOUNTS="$MOUNTS -v $DIR/home/.bashrc:$CONTAINER_HOME/.bashrc"
 
 echo "Starting Qserv deploy on cluster $QSERV_CFG_DIR"
 

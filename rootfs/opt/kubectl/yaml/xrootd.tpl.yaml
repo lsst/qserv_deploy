@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: xrootd
+  labels:
+    tier: xrootd
+    app: qserv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: xrootd
+      app: qserv
+  serviceName: qserv 
+  template:
+    metadata:
+      labels:
+        tier: xrootd
+        app: qserv
+        headless: enabled
+    spec:
+      containers:
+        - name: cmsd
+          image: "<INI_IMAGE>"
+          imagePullPolicy: Always
+          args:
+            - /config-start/start.sh
+          command:
+            - sh
+          env:
+            - name: XROOTD_MANAGER
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: XROOTD_MANAGER
+            - name: QSERV_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: QSERV_DOMAIN
+          volumeMounts:
+          - name: config-xrootd-etc
+            mountPath: /config-etc
+          - name: config-cmsd-start
+            mountPath: /config-start
+          - name: xrootd-adminpath
+            mountPath: /qserv/run/tmp/xrd
+        - name: xrootd
+          image: "<INI_IMAGE>"
+          imagePullPolicy: Always
+          args:
+            - /config-start/start.sh
+          command:
+            - sh
+          env:
+            - name: XROOTD_MANAGER
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: XROOTD_MANAGER
+            - name: QSERV_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: config-domainnames
+                  key: QSERV_DOMAIN
+          ports:
+          - name: xrootd
+            containerPort: 1094
+          volumeMounts:
+          - name: config-xrootd-etc
+            mountPath: /config-etc
+          - name: config-xrootd-start
+            mountPath: /config-start
+          - name: xrootd-adminpath
+            mountPath: /qserv/run/tmp/xrd
+      volumes:
+        - name: config-cmsd-start
+          configMap:
+            name: config-cmsd-start
+        - name: config-xrootd-etc
+          configMap:
+            name: config-xrootd-etc
+        - name: config-xrootd-start
+          configMap:
+            name: config-xrootd-start
+        - name: xrootd-adminpath
+          emptyDir: {}

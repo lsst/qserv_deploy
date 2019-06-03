@@ -1,9 +1,9 @@
 # Unified configuration for xrootd/cmsd for both manager and server instances
 # "if"-block separates manager-only and server-only configuration.
 
-# CZAR_DN env var must be defined inside container
+# XROOTD_DN env var must be defined inside container
 # DN stands for "Domain Name"
-set masterdn = $CZAR_DN
+set masterdn = $XROOTD_DN
 
 ############################
 # if: manager node
@@ -20,6 +20,10 @@ else
 
     # Use server mode
     all.role server
+
+    # Get virtual network id, issued from mysql data
+    set vnidfile = $VNID_FILE
+    cms.vnid <${vnidfile}
 
     # Use XrdSsi plugin
     xrootd.fslib libXrdSsi.so
@@ -39,7 +43,7 @@ fi
 ########################################
 
 # Path to write logging and other information
-all.adminpath /qserv/run/tmp
+all.adminpath /qserv/run/tmp/xrd
 
 # host:port of manager instance (2131 is default)
 all.manager ${masterdn}:2131

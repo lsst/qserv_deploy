@@ -22,4 +22,7 @@ cp "$HOME"/.kube/config "$QSERV_CFG_DIR"/dot-kube/config
 echo "Qserv pods are up:"
 kubectl get pods --selector="app=qserv"
 
+# TODO Add strong check for Qserv startup
+sleep 10
+
 "$BASE"/qserv-deploy.sh -M -C "$QSERV_CFG_DIR" -d /opt/kubectl/run-multinode-tests.sh

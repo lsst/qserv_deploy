@@ -27,39 +27,33 @@ if [ "$INSTANCE_NAME" = 'master' ]; then
 
 else
 
-    XRDSSI_CONFIG="$CONFIG_DIR/xrdssi.cf"
     MYSQLD_SOCKET="/qserv/data/mysql/mysql.sock"
-
-    # Wait for local mysql to be configured and started
-    while true; do
-        if mysql --socket "$MYSQLD_SOCKET" --user="$MYSQLD_USER_QSERV"  --skip-column-names \
-            -e "SELECT CONCAT('Mariadb is up: ', version())"
-        then
-            break
-        else
-            echo "Wait for MySQL startup"
-        fi
-        sleep 2
-    done
+    XRDSSI_CONFIG="$CONFIG_DIR/xrdssi.cf"
 
     # Wait for xrootd master reachability
     until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${XROOTD_DN}/1094"
     do
-        echo "Wait for xrootd manager (${XROOTD_DN})"
+        echo "waiting for xrootd master (${XROOTD_DN})..."
         sleep 2
     done
     OPT_XRD_SSI="-l @libXrdSsiLog.so -+xrdssi $XRDSSI_CONFIG"
 
-    # TODO move to /qserv/run/tmp when it is managed as a shared volume
-    export VNID_FILE="/qserv/data/mysql/cms_vnid.txt"
-    until test -e "$VNID_FILE"
+    # Write worker id to file
+    while true
     do
-        echo "Wait for $VNID_FILE to be created by cmsd container"
-        sleep 2
+        WORKER=$(mysql --socket "$MYSQLD_SOCKET" --batch \
+        --skip-column-names --user="$MYSQLD_USER_QSERV" -e "SELECT id FROM qservw_worker.Id;")
+        if [ -n "$WORKER" ]; then
+            break
+        fi
     done
+    export VNID_FILE="/qserv/data/mysql/cms_vnid.txt"
+    echo "$WORKER" > "$VNID_FILE"
 fi
 
-# Start xrootd
+
+
+# Start cmsd
 #
-echo "Start xrootd"
-xrootd -c "$XROOTD_CONFIG" -n "$INSTANCE_NAME" -I v4 $OPT_XRD_SSI
+echo "Start cmsd"
+cmsd -c "$XROOTD_CONFIG" -n "$INSTANCE_NAME" -I v4 $OPT_XRD_SSI
