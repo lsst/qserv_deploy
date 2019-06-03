@@ -86,6 +86,9 @@ spec:
             - /config-start/start.sh
           command:
             - sh
+          resources:
+            limits:
+              memory: "13G"
           env:
             - name: XROOTD_MANAGER
               valueFrom:
