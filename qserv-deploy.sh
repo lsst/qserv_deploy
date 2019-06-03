@@ -99,7 +99,7 @@ DOT_KUBE_DIR="$QSERV_CFG_DIR/dot-kube"
 mkdir -p "$DOT_KUBE_DIR"
 MOUNTS="$MOUNTS -v $DOT_KUBE_DIR:$CONTAINER_HOME/.kube"
 
-MOUNTS="$MOUNTS -v $DIR/home/.bashrc:$CONTAINER_HOME/.bashrc"
+MOUNTS="$MOUNTS -v $DIR/homefs/.bashrc:$CONTAINER_HOME/.bashrc"
 
 echo "Starting Qserv deploy on cluster $QSERV_CFG_DIR"
 
