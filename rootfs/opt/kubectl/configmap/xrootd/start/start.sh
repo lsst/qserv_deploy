@@ -19,7 +19,9 @@ export INSTANCE_NAME
 if [ "$INSTANCE_NAME" = 'worker' ]; then
 
     # Increase limit for locked-in-memory size
-    MLOCK_AMOUNT=$(grep MemTotal /proc/meminfo | awk '{printf("%.0f\n", $2 - 4000000)}')
+    if [ -z "${MLOCK_AMOUNT}" ]; then
+        MLOCK_AMOUNT=$(grep MemTotal /proc/meminfo | awk '{printf("%.0f\n", $2 - 4000000)}')
+    fi
     ulimit -l "$MLOCK_AMOUNT"
 
 fi

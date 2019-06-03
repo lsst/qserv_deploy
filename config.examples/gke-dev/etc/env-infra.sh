@@ -1,7 +1,7 @@
 # Parameters related to GKE instructure
 
 # Size of memory for czar pod(s)
-MEM_REQUEST="10Gi"
+CZAR_DB_MEM_REQUEST="10Gi"
 
 # Size of GKE volumes for all pods
 STORAGE_SIZE="1Gi"
