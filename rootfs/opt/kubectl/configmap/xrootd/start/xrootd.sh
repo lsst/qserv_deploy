@@ -34,9 +34,9 @@ if [ "$INSTANCE_NAME" != 'manager' ]; then
     done
 
     # Wait for xrootd master reachability
-    until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${XROOTD_DN}/1094"
+    until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${XROOTD_MANAGER}/1094"
     do
-        echo "Wait for xrootd manager (${XROOTD_DN})"
+        echo "Wait for xrootd manager (${XROOTD_MANAGER})"
         sleep 2
     done
     OPT_XRD_SSI="-l @libXrdSsiLog.so -+xrdssi $XRDSSI_CONFIG"

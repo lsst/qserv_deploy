@@ -60,7 +60,11 @@ ssi.loglib libxrdlog.so
 # This may speed up request processing.
 xrd.network nodnr
 
-xrd.port 1094
+if exec cmsd
+    xrd.port 2131
+else
+    xrd.port 1094
+fi
 
 # Uncomment the following line for detailed xrootd debugging
 # xrootd.trace all debug
