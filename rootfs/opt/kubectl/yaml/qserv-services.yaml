@@ -63,3 +63,42 @@ spec:
   selector:
     app: qserv
     tier: xrootd-mgr-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xrootd-mgr-1
+  labels:
+    app: qserv
+    tier: xrootd-mgr-1
+spec:
+  ports:
+    # Used by qserv workers
+    - port: 2131
+      name: cmsd
+    # Used by repl-ctl
+    - port: 1094
+      name: xrootd
+  selector:
+    app: qserv
+    tier: xrootd-mgr-1
+# DOES NOT WORK
+# ---
+# 
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: xrootd-mgr 
+# spec:
+#   clusterIP: None
+#   ports:
+#     # Used by qserv workers
+#     - port: 2131
+#       name: cmsd
+#     # Used by repl-ctl
+#     - port: 1094
+#       name: xrootd
+#   externalIPs:
+#   - 10.63.245.122
+#   - 10.63.250.176
+  
