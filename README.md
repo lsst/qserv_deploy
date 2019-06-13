@@ -27,7 +27,7 @@ Status](https://travis-ci.org/lsst/qserv_deploy.svg?branch=master)](https://trav
 
 An existing up and running Kubernetes cluster might be used, or it is also possible to create one:
 - on Google Kubernetes Engine: [GKE documentation](./doc/gke.md)
-- on Minikube: [Minikube documentation](./doc/minikube.md)
+- on kind: [kind documentation](./doc/kind.md)
 
 ## Retrieve kubeconfig
 

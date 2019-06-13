@@ -21,7 +21,7 @@ kind create cluster --config "$DIR/kind-config.yaml" --name qserv
 
 export KUBECONFIG=$(kind get kubeconfig-path --name="qserv")
 
-# this for loop waits until kubectl can access the api server that Minikube has created
+# this for loop waits until kubectl can access the api server that kind has created
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'
 until "$KUBECTL_BIN" get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"
   do sleep 1

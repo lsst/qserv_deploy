@@ -21,7 +21,6 @@ Usage: `basename $0` [options] [cmd]
     -g <dir>     Path to gcloud configuration directory
                  Default to <cfgdir>/dot-config
     -h           This message
-    -M           Mount \$HOME/.minikube inside container
     -s <dir>     Path to ssh configuration directory.
                  Default to \$HOME/.ssh
 
@@ -36,13 +35,12 @@ EOD
 
 
 # get the options
-while getopts C:dg:hMs: c ; do
+while getopts C:dg:hs: c ; do
     case $c in
         C) QSERV_CFG_DIR="$OPTARG" ;;
         d) QSERV_DEV=true ;;
         g) GCLOUD_DIR="$OPTARG" ;;
         h) usage ; exit 0 ;;
-        M) MOUNT_DOT_MK=true ;;
         s) SSH_DIR="$OPTARGS" ;;
         \?) usage ; exit 2 ;;
     esac
@@ -106,12 +104,6 @@ echo "Starting Qserv deploy on cluster $QSERV_CFG_DIR"
 if [ "$QSERV_DEV" = true ]; then
     echo "Running in development mode"
     MOUNTS="$MOUNTS -v $DIR/rootfs/opt:/opt"
-fi
-
-# Used with minikube to retrieve keys stored in $HOME/.minikube/
-if [ "$MOUNT_DOT_MK" = true ]; then
-    echo "Mounting $HOME/.minikube inside container"
-    MOUNTS="$MOUNTS -v $HOME/.minikube:$HOME/.minikube"
 fi
 
 docker run -it --net=host --rm -l config-path="$QSERV_CFG_DIR" \

@@ -212,17 +212,11 @@ if __name__ == "__main__":
             if yaml_data['metadata']['name'] == 'qserv':
                 yaml_data['spec']['replicas'] = int(config.get('spec', 'replicas'))
 
-            minikube = _str_to_bool(config.get('spec', 'minikube'))
+            kind = _str_to_bool(config.get('spec', 'kind'))
             gke = _str_to_bool(config.get('spec', 'gke'))
             volumeClaimTemplates = yaml_data['spec']['volumeClaimTemplates']
-            if minikube:
-                storage_class = "standard"
-            elif gke:
-                storage_class = "manual"
-            else:
-                storage_class = "qserv-local-storage"
-
-            if gke or minikube:
+            
+            if gke or kind:
                 volumeClaimTemplates[0]['spec']['resources'] = dict()
                 vct_resources = volumeClaimTemplates[0]['spec']['resources']
                 vct_resources['requests'] = dict()
@@ -231,6 +225,7 @@ if __name__ == "__main__":
                 vct_resources['requests']['storage'] = config.get('spec',
                                                                 'storage_size')
             else:
+                storage_class = "qserv-local-storage"
                 volumeClaimTemplates[0]['spec']['storageClassName'] = storage_class
 
             # Configure mysql-proxy

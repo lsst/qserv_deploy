@@ -6,6 +6,4 @@ STORAGE_SIZE="3Ti"
 SIZE_WORKER=2
 
 # Enable Kind
-# Todo rename variable
-MINIKUBE=true
-export MINIKUBE
+export KIND=true
