@@ -10,15 +10,6 @@ if named manager
     # Use manager mode
     all.role manager
 
-    # Connect to manager without using DNS
-    # Because k8s require next order:
-    #   1 service starts
-    #   2 readiness probe returns true
-    #   3 DNS registration is performed
-    set managerhost = $HOSTNAME
-    # all.manager ${managerdn}:2131
-    all.manager ${managerhost}:2131
-
 ############################
 # else: server nodes
 ############################
@@ -39,12 +30,6 @@ else
     # Force disable asyncronous access
     # because of XrdSsi
     xrootd.async off
-
-    # DN stands for "Domain Name"
-    set managerdn = $XROOTD_DN
-    # host:port of manager instance (2131 is default)
-    all.manager xrootd-mgr-0.qserv:2131
-    all.manager xrootd-mgr-1.qserv:2131
 
     ssi.trace all debug
 
@@ -73,7 +58,26 @@ ssi.loglib libxrdlog.so
 # This may speed up request processing.
 xrd.network nodnr
 
-xrd.port 1094
+# This causes hostname resolution to occur at run-time not configuration time
+# This is required by k8s
+# Andy H. still have to modify the local IP-to-Name cache to account
+# for dynamic DNS (it doesn't now). Unfortunately, it's a non-ABI compatible
+# change so it will go into Release 5 branch not git master. The caching
+# shouldn't really be a problem but if causes you grief simply turn it off by
+# also specifying "xrd.network cache 0". Once Andy H. fixes the cache it will work
+# correctly with a dynamic DNS with no side-effects (though it's unlikely any of
+# them are observed as it is).
+xrd.network dyndns
+xrd.network cache 0
+
+all.manager xrootd-mgr-0.qserv:2131
+all.manager xrootd-mgr-1.qserv:2131
+
+# xrootd default port is 1094
+if exec cmsd
+    xrd.port 2131
+fi
+
 
 # Uncomment the following line for detailed xrootd debugging
 # xrootd.trace all debug
