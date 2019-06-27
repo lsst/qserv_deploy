@@ -19,7 +19,7 @@ spec:
       labels:
         tier: worker
         app: qserv
-        headless: enabled
+        headless: qserv
     spec:
       containers:
         - name: cmsd
@@ -30,17 +30,6 @@ spec:
             - cmsd
           command:
             - /config-start/start.sh
-          env:
-            - name: XROOTD_MANAGER
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: XROOTD_MANAGER
-            - name: QSERV_DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: QSERV_DOMAIN
           securityContext:
             capabilities:
               add:
@@ -87,17 +76,6 @@ spec:
             - /config-start/start.sh
           command:
             - sh
-          env:
-            - name: XROOTD_MANAGER
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: XROOTD_MANAGER
-            - name: QSERV_DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: QSERV_DOMAIN
           livenessProbe:
             tcpSocket:
               port: xrootd

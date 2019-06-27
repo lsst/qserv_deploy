@@ -20,8 +20,8 @@ if [ "$INSTANCE_NAME" = 'manager' ]; then
 
     # It seems both cmsd and xrootd pods need to be started
     # for DNS to resolve
-    until ping -c 1 ${HOSTNAME}.${QSERV_DOMAIN}; do
-        echo "waiting for DNS (${HOSTNAME}.${QSERV_DOMAIN})..."
+    until ping -c 1 ${HOSTNAME}.${XROOTD_DOMAIN}; do
+        echo "waiting for DNS (${HOSTNAME}.${XROOTD_DOMAIN})..."
         sleep 2
     done
 

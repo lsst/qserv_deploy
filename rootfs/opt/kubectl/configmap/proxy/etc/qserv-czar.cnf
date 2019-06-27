@@ -1,6 +1,6 @@
 [frontend]
 
-xrootd=xrootd-mgr-0.qserv:1094
+xrootd=xrootd-mgr:1094
 
 #[mgmtdb]
 #db=qservMeta

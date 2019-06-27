@@ -11,13 +11,12 @@ spec:
     matchLabels:
       tier: xrootd-mgr
       app: qserv
-  serviceName: qserv
+  serviceName: xrootd-mgr
   template:
     metadata:
       labels:
         tier: xrootd-mgr
         app: qserv
-        headless: enabled
     spec:
       containers:
         - name: cmsd
@@ -28,17 +27,6 @@ spec:
             - cmsd
           command:
             - /config-start/start.sh
-          env:
-            - name: XROOTD_MANAGER
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: XROOTD_MANAGER
-            - name: QSERV_DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: QSERV_DOMAIN
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc
@@ -53,17 +41,6 @@ spec:
             - /config-start/start.sh
           command:
             - sh
-          env:
-            - name: XROOTD_MANAGER
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: XROOTD_MANAGER
-            - name: QSERV_DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: config-domainnames
-                  key: QSERV_DOMAIN
           ports:
           - name: xrootd
             containerPort: 1094
