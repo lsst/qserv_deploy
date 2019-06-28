@@ -16,7 +16,8 @@ Usage: `basename $0` [options] [cmd]
   Available options:
     -S <service> Service to start, default to xrootd
 
-  Start cmsd or setup ulimit and start xrootd.
+  Prepare cmsd and xrootd (ulimit setup) startup and
+  launch associated startup script using qserv user.
 EOD
 }
 
@@ -57,4 +58,4 @@ if [ "$service" = "xrootd" -a "$INSTANCE_NAME" = 'worker' ]; then
 
 fi
 
-su qserv -c "sh /config-start/$service.sh"
+su qserv -c "/config-start/xrd.sh -S $service"
