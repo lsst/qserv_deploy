@@ -52,12 +52,12 @@ spec:
           livenessProbe:
             tcpSocket:
               port: mariadb
-            initialDelaySeconds: 15
-            periodSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: mariadb
-            initialDelaySeconds: 15
+            initialDelaySeconds: 10
             periodSeconds: 5
           ports:
           - name: mariadb
@@ -80,7 +80,7 @@ spec:
             tcpSocket:
               port: xrootd
             initialDelaySeconds: 10
-            periodSeconds: 5
+            periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: xrootd
@@ -119,7 +119,7 @@ spec:
             tcpSocket:
               port: wmgr
             initialDelaySeconds: 10
-            periodSeconds: 5
+            periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: wmgr

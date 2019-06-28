@@ -27,6 +27,19 @@ spec:
             - cmsd
           command:
             - /config-start/start.sh
+          livenessProbe:
+            tcpSocket:
+              port: cmsd
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: cmsd
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          ports:
+          - name: cmsd
+            containerPort: 2131
           volumeMounts:
           - name: config-xrootd-etc
             mountPath: /config-etc
@@ -41,6 +54,16 @@ spec:
             - /config-start/start.sh
           command:
             - sh
+          livenessProbe:
+            tcpSocket:
+              port: xrootd
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: xrootd
+            initialDelaySeconds: 10
+            periodSeconds: 5
           ports:
           - name: xrootd
             containerPort: 1094

@@ -73,11 +73,13 @@ xrd.network cache 0
 all.manager xrootd-mgr-0.xrootd-mgr:2131
 all.manager xrootd-mgr-1.xrootd-mgr:2131
 
-# xrootd default port is 1094
+# - cmsd redirector runs on port 2131
+# - cmsd server does not open server socket
+#   but only client connection to cmsd redirector
+# - xrootd default port is 1094
 if exec cmsd
     xrd.port 2131
 fi
-
 
 # Uncomment the following line for detailed xrootd debugging
 # xrootd.trace all debug

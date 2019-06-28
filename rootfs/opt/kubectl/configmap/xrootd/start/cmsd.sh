@@ -16,16 +16,7 @@ XROOTD_CONFIG="$CONFIG_DIR/xrootd.cf"
 
 # INSTANCE_NAME is required by xrdssi plugin to
 # choose which type of queries to launch against metadata
-if [ "$INSTANCE_NAME" = 'manager' ]; then
-
-    # It seems both cmsd and xrootd pods need to be started
-    # for DNS to resolve
-    until ping -c 1 ${HOSTNAME}.${XROOTD_DOMAIN}; do
-        echo "waiting for DNS (${HOSTNAME}.${XROOTD_DOMAIN})..."
-        sleep 2
-    done
-
-else
+if [ "$INSTANCE_NAME" = 'worker' ]; then
 
     MYSQLD_SOCKET="/qserv/data/mysql/mysql.sock"
     XRDSSI_CONFIG="$CONFIG_DIR/xrdssi.cf"
