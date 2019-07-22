@@ -59,6 +59,14 @@ else
     done
 fi
 
+# Uncomment lines below for debug purpose:
+#if  [ "$HOSTNAME" = "qserv-10" ]; then
+#    while true;
+#    do
+#        sleep 3600
+#    done
+#fi
+
 # Start xrootd
 #
 echo "Start xrootd"

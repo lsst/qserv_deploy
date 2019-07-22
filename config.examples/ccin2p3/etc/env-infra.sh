@@ -1,5 +1,10 @@
 # Parameters related to CC-IN2P3 bare-metal cluster
 
+# Size of memory for xrootd worker pod(s)
+WKR_XROOTD_MEM_LIMIT="11Gi"
+# Amount of memlock-able memory in bits
+WKR_XROOTD_MLOCK="10000000"
+
 # All host have same prefix
 HOSTNAME_TPL="ccqserv"
 

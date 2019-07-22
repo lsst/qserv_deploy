@@ -89,11 +89,13 @@ cat << EOF > "$INI_FILE"
 gke: $INI_GKE
 storage_size: $STORAGE_SIZE
 mariadb_image: $MARIADB_IMAGE
-mem_request: $MEM_REQUEST
+czar_db_mem_request: $CZAR_DB_MEM_REQUEST
 qserv_image: $QSERV_IMAGE
 kind: $INI_KIND
 replicas: $WORKER_COUNT
 repl_image: $REPL_IMAGE
+wkr_xrootd_mem_limit: $WKR_XROOTD_MEM_LIMIT
+wkr_xrootd_mlock: $WKR_XROOTD_MLOCK
 EOF
 
 for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd"

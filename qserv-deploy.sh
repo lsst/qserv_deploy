@@ -89,6 +89,7 @@ CONTAINER_HOME="/home/$USER"
 
 mkdir -p $GCLOUD_DIR
 MOUNTS="$MOUNTS -v $GCLOUD_DIR:$CONTAINER_HOME/.config"
+# 'qserv-deploy' container mounts host directory 'homefs/' in its homedir
 MOUNTS="$MOUNTS -v $DIR/homefs:$CONTAINER_HOME"
 MOUNTS="$MOUNTS -v $SSH_DIR:$CONTAINER_HOME/.ssh"
 
@@ -98,6 +99,7 @@ DOT_KUBE_DIR="$QSERV_CFG_DIR/dot-kube"
 mkdir -p "$DOT_KUBE_DIR"
 MOUNTS="$MOUNTS -v $DOT_KUBE_DIR:$CONTAINER_HOME/.kube"
 
+MOUNTS="$MOUNTS -v $DIR/homefs/.bashrc:$CONTAINER_HOME/.bashrc"
 
 echo "Starting Qserv deploy on cluster $QSERV_CFG_DIR"
 

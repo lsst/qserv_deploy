@@ -2,7 +2,7 @@
 
 # LSST Data Management System
 # Copyright 2014 LSST Corporation.
-# 
+#
 # This product includes software developed by the
 # LSST Project (http://www.lsst.org/).
 #
@@ -10,14 +10,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
-# You should have received a copy of the LSST License Statement and 
-# the GNU General Public License along with this program.  If not, 
+#
+# You should have received a copy of the LSST License Statement and
+# the GNU General Public License along with this program.  If not,
 # see <http://www.lsstcorp.org/LegalNotices/>.
 
 """
@@ -108,13 +108,18 @@ def _get_init_container_id(container_name):
 
 def _set_env(container, env_name, env_value):
     _set = False
+    if 'env' not in container.keys():
+        container['env'] = dict()
     for i, env in enumerate(container['env']):
         if env['name'] == env_name:
             env['value'] = env_value
             _set = True
             break
     if not _set:
-        _LOG.log(logging.WARNING, "Unable to set env variable %s", env_name)
+        env = dict()
+        env['name'] = env_name
+        env['value'] = env_value
+        container['env'].append(env)
 
 def _is_czar():
     name = yaml_data['metadata']['name']
@@ -151,6 +156,11 @@ def _add_volume(host_dir, volume_name):
     volumes = yaml_data_tpl['volumes']
     volumes.append(volume)
 
+def _set_image(container_name, image):
+    container_id = _get_container_id(container_name)
+    if container_id is not None:
+        container = yaml_data_tpl['containers'][container_id]
+        container['image'] = config.get('spec', image)
 
 def _add_emptydir_volume(volume_name):
     _add_volume(None, volume_name)
@@ -194,21 +204,25 @@ if __name__ == "__main__":
         # Configure cmsd and xrootd
         #
         if yaml_data['metadata']['name'] in ['qserv', 'xrootd']:
+            _set_image('xrootd', 'qserv_image')
+            _set_image('cmsd', 'qserv_image')
 
-            container_id = _get_container_id('xrootd')
-            if container_id is not None:
+        if yaml_data['metadata']['name'] == 'qserv':
+                yaml_data['spec']['replicas'] = int(config.get('spec', 'replicas'))
+                container_id = _get_container_id('xrootd')
                 container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
+                if config.get('spec', 'wkr_xrootd_mem_limit'):
+                    container['resources'] = dict()
+                    resources = container['resources']
+                    resources['limits'] = dict()
+                    resources['limits']['memory'] = config.get('spec', 'wkr_xrootd_mem_limit')
+                if config.get('spec', 'wkr_xrootd_mlock'):
+                    _set_env(container, 'MLOCK_AMOUNT', config.get('spec', 'wkr_xrootd_mlock'))
 
-            container_id = _get_container_id('cmsd')
-            if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
 
         # Configure czar and worker
         #
         if yaml_data['metadata']['name'] in ['czar', 'qserv']:
-
             if yaml_data['metadata']['name'] == 'qserv':
                 yaml_data['spec']['replicas'] = int(config.get('spec', 'replicas'))
 
@@ -230,36 +244,27 @@ if __name__ == "__main__":
 
             # Configure mysql-proxy
             #
-            container_id = _get_container_id('proxy')
-            if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
+            _set_image('proxy', 'qserv_image')
 
             # Configure wmgr
             #
-            container_id = _get_container_id('wmgr')
-            if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
+            _set_image('wmgr', 'qserv_image')
 
             # Configure mariadb
             #
+            _set_image('mariadb', 'qserv_image')
             container_id = _get_container_id('mariadb')
             if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'qserv_image')
-                if _is_czar() and config.get('spec', 'mem_request'):
+                if _is_czar() and config.get('spec', 'czar_db_mem_request'):
+                    container = yaml_data_tpl['containers'][container_id]
                     container['resources'] = dict()
                     resources = container['resources']
                     resources['requests'] = dict()
-                    resources['requests']['memory'] = config.get('spec', 'mem_request')
+                    resources['requests']['memory'] = config.get('spec', 'czar_db_mem_request')
 
             # Configure replication worker
             #
-            container_id = _get_container_id('repl')
-            if container_id is not None:
-                container = yaml_data_tpl['containers'][container_id]
-                container['image'] = config.get('spec', 'repl_image')
+            _set_image('repl', 'repl_image')
 
             # initContainer: configure qserv-data-dir using mariadb qserv_image
             #
@@ -288,9 +293,7 @@ if __name__ == "__main__":
         # Configure replication database
         #
         elif yaml_data['metadata']['name'] == 'repl-db':
-            container_id = _get_container_id('mariadb')
-            container = yaml_data_tpl['containers'][container_id]
-            container['image'] = config.get('spec', 'mariadb_image')
+            _set_image('mariadb', 'mariadb_image')
 
         with open(args.yamlFile, 'w') as f:
             f.write(yaml.dump(yaml_data, default_flow_style=False))
