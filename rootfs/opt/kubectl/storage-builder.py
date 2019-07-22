@@ -21,9 +21,10 @@
 # see <http://www.lsstcorp.org/LegalNotices/>.
 
 """
-Create k8s Persistent Volumes and Persitent Volume Claims
+Create k8s Persistent Volumes and Persistent Volume Claims
 
 @author Benjamin Roziere, IN2P3
+@author Fabrice Jammes, IN2P3
 """
 
 # -------------------------------
@@ -36,31 +37,25 @@ import yaml
 
 def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_dir):
 
-    minikube = True
-    if hostname:
-        minikube = False
-
     # yaml for persistent volume
     #
-    # On minikube pvc will automatically create pv
-    if not minikube:
-        tpl_fname = 'qserv-pv.tpl'
+    tpl_fname = 'qserv-pv.tpl'
 
-        yaml_tpl = os.path.join(template_dir, tpl_fname)
-        with open(yaml_tpl, 'r') as f:
-            yaml_storage = yaml.load(f)
+    yaml_tpl = os.path.join(template_dir, tpl_fname)
+    with open(yaml_tpl, 'r') as f:
+        yaml_storage = yaml.load(f)
 
-        yaml_storage['metadata']['name'] = "{}-pv-{}".format(data_name, data_id)
-        yaml_storage['metadata']['labels']['dataid'] = data_id
+    yaml_storage['metadata']['name'] = "{}-pv-{}".format(data_name, data_id)
+    yaml_storage['metadata']['labels']['dataid'] = data_id
 
-        node_name = yaml_storage['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values']
-        node_name[0] = hostname
-        yaml_storage['spec']['local']['path'] = data_path
+    node_name = yaml_storage['spec']['nodeAffinity']['required']['nodeSelectorTerms'][0]['matchExpressions'][0]['values']
+    node_name[0] = hostname
+    yaml_storage['spec']['local']['path'] = data_path
 
-        yaml_fname = "{}-pv-{}.yaml".format(data_name, data_id)
-        yaml_fname = os.path.join(output_dir, yaml_fname)
-        with open( yaml_fname, "w") as f:
-            f.write(yaml.dump(yaml_storage, default_flow_style=False))
+    yaml_fname = "{}-pv-{}.yaml".format(data_name, data_id)
+    yaml_fname = os.path.join(output_dir, yaml_fname)
+    with open( yaml_fname, "w") as f:
+        f.write(yaml.dump(yaml_storage, default_flow_style=False))
 
     # yaml for persistent volume claim
     #
@@ -70,11 +65,6 @@ def _build_yaml(data_path, data_name, hostname, data_id, output_dir, template_di
 
     yaml_storage['metadata']['name'] = "{}-{}".format(data_name, data_id)
     yaml_storage['spec']['selector']['matchLabels']['dataid'] = data_id
-
-    if minikube:
-        # See
-        # https://github.com/kubernetes/minikube/blob/master/deploy/addons/storageclass/storageclass.yaml
-        yaml_storage['spec']['storageClassName'] = 'standard'
 
     yaml_fname = "{}-pvc-{}.yaml".format(data_name, data_id)
     yaml_fname = os.path.join(output_dir, yaml_fname)
@@ -94,7 +84,7 @@ if __name__ == "__main__":
                             help='Name of the data')
         parser.add_argument('-H', '--hostname', dest='hostname',
                             required=False, metavar='<hostname>',
-                            help='Hostname of the node, leave blank for minikube')
+                            help='Hostname of the node')
         parser.add_argument('-d', '--dataid', dest='data_id',
                             required=True, metavar='<dataId>',
                             help='Data ID')
@@ -113,4 +103,3 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
         sys.exit(1)
-

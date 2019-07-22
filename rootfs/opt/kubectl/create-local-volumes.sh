@@ -61,7 +61,7 @@ fi
 
 if [ "$GKE" = true ]; then
     exit
-elif [ "$MINIKUBE" = true ]; then
+elif [ "$KIND" = true ]; then
     exit
 fi
 

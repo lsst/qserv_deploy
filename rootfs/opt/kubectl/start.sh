@@ -71,10 +71,10 @@ cp ${CFG_DIR}/qserv-services.yaml "$OUTDIR"
 echo "Create statefulsets for Qserv"
 
 # Convert to python by setting first letter to uppercase letter
-if [ $MINIKUBE ]; then
-    INI_MINIKUBE="True"
+if [ $KIND ]; then
+    INI_KIND="True"
 else
-    INI_MINIKUBE="False"
+    INI_KIND="False"
 fi
 if [ $GKE ]; then
     INI_GKE="True"
@@ -91,7 +91,7 @@ storage_size: $STORAGE_SIZE
 mariadb_image: $MARIADB_IMAGE
 mem_request: $MEM_REQUEST
 qserv_image: $QSERV_IMAGE
-minikube: $INI_MINIKUBE
+kind: $INI_KIND
 replicas: $WORKER_COUNT
 repl_image: $REPL_IMAGE
 EOF
