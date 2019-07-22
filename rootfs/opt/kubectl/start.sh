@@ -98,7 +98,7 @@ wkr_xrootd_mem_limit: $WKR_XROOTD_MEM_LIMIT
 wkr_xrootd_mlock: $WKR_XROOTD_MLOCK
 EOF
 
-for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd"
+for service in "czar" "worker" "repl-ctl" "repl-db" "xrootd-mgr"
 do
     YAML_TPL="${CFG_DIR}/${service}.tpl.yaml"
     YAML_FILE="${OUTDIR}/${service}.yaml"

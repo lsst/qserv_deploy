@@ -4,6 +4,7 @@ metadata:
   name: qserv
   labels:
     app: qserv
+    headless: qserv
 spec:
   ports:
   - port: 1094
@@ -11,7 +12,23 @@ spec:
   clusterIP: None
   selector:
     app: qserv
-    headless: enabled
+    headless: qserv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xrootd-mgr
+  labels:
+    app: qserv
+    tier: xrootd-mgr
+spec:
+  ports:
+  - port: 1094
+    name: xrootd
+  clusterIP: None
+  selector:
+    app: qserv
+    tier: xrootd-mgr
 ---
 apiVersion: v1
 kind: Service
@@ -24,7 +41,7 @@ spec:
   type: NodePort
   ports:
     # the port that this service should serve on
-    - name: qserv 
+    - name: qserv
       port: 4040
       nodePort: 30040
   # label keys and values that must match in order to receive traffic for this service
@@ -42,7 +59,7 @@ metadata:
 spec:
   ports:
     # the port that this service should serve on
-    - name: repl-ctl 
+    - name: repl-ctl
       port: 80
   selector:
     app: qserv

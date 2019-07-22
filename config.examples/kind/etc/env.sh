@@ -7,7 +7,7 @@
 # Versions must match an existing container tag
 MARIADB_VERSION="10.2.16"
 QSERV_DEPLOY_VERSION="872c033"
-QSERV_VERSION="11a6001"
+QSERV_VERSION="9701693"
 REPL_VERSION="tools-w.2018.16-556-g62efc42-dirty"
 
 # Mariadb container image name

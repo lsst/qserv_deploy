@@ -125,7 +125,6 @@ def _is_czar():
     name = yaml_data['metadata']['name']
     return name == 'czar'
 
-
 def _mount_volume(container_name, container_dir, volume_name):
     """
     Map host_dir to container_dir in pod configuration
@@ -203,7 +202,7 @@ if __name__ == "__main__":
 
         # Configure cmsd and xrootd
         #
-        if yaml_data['metadata']['name'] in ['qserv', 'xrootd']:
+        if yaml_data['metadata']['name'] in ['qserv', 'xrootd-mgr']:
             _set_image('xrootd', 'qserv_image')
             _set_image('cmsd', 'qserv_image')
 

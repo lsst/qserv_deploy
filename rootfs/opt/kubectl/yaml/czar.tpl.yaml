@@ -18,7 +18,7 @@ spec:
       labels:
         tier: czar
         app: qserv
-        headless: enabled
+        headless: qserv
     spec:
       containers:
         - name: mariadb
