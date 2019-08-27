@@ -109,7 +109,7 @@ def _get_init_container_id(container_name):
 def _set_env(container, env_name, env_value):
     _set = False
     if 'env' not in container.keys():
-        container['env'] = dict()
+        container['env'] = list()
     for i, env in enumerate(container['env']):
         if env['name'] == env_name:
             env['value'] = env_value
@@ -228,7 +228,7 @@ if __name__ == "__main__":
             kind = _str_to_bool(config.get('spec', 'kind'))
             gke = _str_to_bool(config.get('spec', 'gke'))
             volumeClaimTemplates = yaml_data['spec']['volumeClaimTemplates']
-            
+
             if gke or kind:
                 volumeClaimTemplates[0]['spec']['resources'] = dict()
                 vct_resources = volumeClaimTemplates[0]['spec']['resources']
