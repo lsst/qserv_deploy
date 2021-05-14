@@ -1,3 +1,5 @@
+warning UNMAINTAINED, and replaced with https://github.com/lsst/qserv-operator
+
 # qserv-deploy usage
 
 Automated procedure to spawn Qserv on a Kubernetes cluster.
